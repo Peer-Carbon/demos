@@ -237,9 +237,9 @@ tr:hover .row-actions { opacity: 1; }
     </div>
   </div>
 
-  <div class="sidebar-bid-selector" onclick="showPage('bid-setup')">
+  <div class="sidebar-bid-selector" onclick="openModal('bid-switcher')">
     <div class="bid-label">Active BID instance</div>
-    <div class="bid-name">Fleet Street Quarter <span>▾</span></div>
+    <div class="bid-name" id="active-bid-name">Fleet Street Quarter <span>▾</span></div>
   </div>
 
   <div class="sidebar-section">
@@ -872,6 +872,111 @@ document.querySelectorAll('.modal-overlay').forEach(m => {
 
 // ── INIT ──
 renderOrgs();
+
+// ── BID INSTANCES ──
+let bids = [
+  { id: 1, name: 'Fleet Street Quarter', slug: 'fleet-street-quarter', contact: 'TBC', email: '', active: true },
+];
+
+function renderBidList() {
+  const list = document.getElementById('bid-list');
+  list.innerHTML = bids.map(b => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border);cursor:pointer;background:${b.active ? 'var(--bg)' : 'white'};" onclick="switchBid(${b.id})">
+      <div>
+        <div style="font-size:14px;font-weight:${b.active ? '500' : '400'};color:var(--text);">${b.name}</div>
+        <div style="font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace;">${b.slug}</div>
+      </div>
+      ${b.active ? '<span style="font-size:11px;background:var(--green-bg);color:var(--green);padding:3px 9px;border-radius:10px;font-weight:500;">Active</span>' : '<span style="font-size:12px;color:var(--text-muted);">Switch →</span>'}
+    </div>
+  `).join('');
+}
+
+function switchBid(id) {
+  bids.forEach(b => b.active = b.id === id);
+  const active = bids.find(b => b.active);
+  document.getElementById('active-bid-name').innerHTML = active.name + ' <span>▾</span>';
+  document.getElementById('bid-name').value = active.name;
+  document.getElementById('bid-slug').value = active.slug;
+  closeModal('bid-switcher');
+  showPageDirect('bid-setup');
+  renderBidList();
+}
+
+function createBid() {
+  const name = document.getElementById('new-bid-name').value.trim();
+  const slug = document.getElementById('new-bid-slug').value.trim();
+  const contact = document.getElementById('new-bid-contact').value.trim();
+  const email = document.getElementById('new-bid-email').value.trim();
+  if (!name || !slug) { alert('Please enter a BID name and slug.'); return; }
+  const newBid = { id: Date.now(), name, slug, contact, email, active: false };
+  bids.push(newBid);
+  closeModal('new-bid-modal');
+  openModal('bid-switcher');
+  renderBidList();
+  ['new-bid-name','new-bid-slug','new-bid-contact','new-bid-email'].forEach(id => document.getElementById(id).value = '');
+}
+
+// Helper to show a page without needing an event
+function showPageDirect(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelector(`.nav-item[onclick*="${id}"]`)?.classList.add('active');
+}
+
+// Render on load
+renderBidList();
+
 </script>
+
+<!-- ══ MODAL: BID SWITCHER ══ -->
+<div class="modal-overlay" id="bid-switcher">
+  <div class="modal" style="width:480px;">
+    <div class="modal-header">
+      <h3>BID instances</h3>
+      <button class="modal-close" onclick="closeModal('bid-switcher')">×</button>
+    </div>
+    <div class="modal-body" style="padding:0;">
+      <div id="bid-list" style="border-bottom:1px solid var(--border);"></div>
+      <div style="padding:16px 24px;">
+        <button class="btn btn-primary" style="width:100%;" onclick="closeModal('bid-switcher'); openModal('new-bid-modal')">+ Create new BID instance</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: NEW BID ══ -->
+<div class="modal-overlay" id="new-bid-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Create new BID instance</h3>
+      <button class="modal-close" onclick="closeModal('new-bid-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>BID name</label>
+        <input type="text" id="new-bid-name" placeholder="e.g. Canary Wharf Group">
+      </div>
+      <div class="field">
+        <label>Short name / slug</label>
+        <input type="text" id="new-bid-slug" placeholder="e.g. canary-wharf">
+        <span class="field-hint">Used in URLs — lowercase, hyphens only</span>
+      </div>
+      <div class="field">
+        <label>Primary contact at BID</label>
+        <input type="text" id="new-bid-contact" placeholder="Full name">
+      </div>
+      <div class="field">
+        <label>Contact email</label>
+        <input type="email" id="new-bid-email" placeholder="contact@bid.org.uk">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('new-bid-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="createBid()">Create BID instance</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
