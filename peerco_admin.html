@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PeerCo Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #0b1d3a;
+  --navy-mid: #132a50;
+  --navy-light: #1e3d6b;
+  --teal: #00c9a7;
+  --teal-dim: #00957c;
+  --bg: #f4f6f9;
+  --white: #ffffff;
+  --border: #dde3ec;
+  --text: #111827;
+  --text-mid: #374151;
+  --text-muted: #6b7280;
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --amber: #d97706;
+  --amber-bg: #fffbeb;
+  --green: #16a34a;
+  --green-bg: #f0fdf4;
+  --blue: #2563eb;
+  --blue-bg: #eff6ff;
+  --sidebar-w: 220px;
+}
+
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; font-size: 14px; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+}
+.sidebar-logo {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; gap: 10px;
+}
+.sidebar-logo img { width: 30px; height: 30px; object-fit: contain; border-radius: 5px; }
+.sidebar-logo span { color: white; font-weight: 500; font-size: 15px; }
+.sidebar-logo small { color: rgba(255,255,255,0.4); font-size: 10px; display: block; font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
+.sidebar-section { padding: 16px 12px 8px; }
+.sidebar-section-label { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em; padding: 0 6px; margin-bottom: 4px; }
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: 7px; cursor: pointer;
+  color: rgba(255,255,255,0.6); font-size: 13px;
+  transition: all 0.15s; margin-bottom: 1px;
+}
+.nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); }
+.nav-item.active { background: rgba(0,201,167,0.15); color: var(--teal); }
+.nav-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+.sidebar-bid-selector {
+  margin: 12px; background: rgba(255,255,255,0.07); border-radius: 8px;
+  padding: 10px 12px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);
+}
+.bid-label { font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+.bid-name { color: white; font-size: 13px; font-weight: 500; display: flex; align-items: center; justify-content: space-between; }
+.bid-name span { font-size: 10px; color: rgba(255,255,255,0.4); }
+
+/* ── MAIN ── */
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 0 28px; height: 56px; display: flex; align-items: center;
+  justify-content: space-between; position: sticky; top: 0; z-index: 10;
+}
+.topbar-title { font-size: 15px; font-weight: 500; color: var(--text); }
+.topbar-actions { display: flex; gap: 10px; align-items: center; }
+.btn {
+  padding: 7px 14px; border-radius: 7px; font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer; border: none;
+  transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--navy); color: white; }
+.btn-primary:hover { background: var(--navy-light); }
+.btn-outline { background: transparent; color: var(--text-mid); border: 1px solid var(--border); }
+.btn-outline:hover { background: var(--bg); }
+.btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid #fecaca; }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-teal { background: var(--teal); color: white; }
+.btn-teal:hover { background: var(--teal-dim); }
+
+/* ── PAGE ── */
+.page { padding: 24px 28px; display: none; }
+.page.active { display: block; }
+
+/* ── SECTION HEADER ── */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.section-header h2 { font-size: 18px; font-weight: 500; }
+.section-header p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+/* ── CARDS ── */
+.card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; }
+.card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.card-header h3 { font-size: 14px; font-weight: 500; }
+.card-body { padding: 20px; }
+
+/* ── BID SETUP ── */
+.setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field.full { grid-column: 1 / -1; }
+label { font-size: 12px; font-weight: 500; color: var(--text-mid); }
+input[type="text"], input[type="email"], input[type="url"], select, textarea {
+  padding: 8px 11px; border: 1px solid var(--border); border-radius: 7px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text);
+  background: var(--white); width: 100%; transition: border 0.15s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0,201,167,0.12);
+}
+textarea { resize: vertical; min-height: 70px; }
+.field-hint { font-size: 11px; color: var(--text-muted); }
+
+/* colour swatches */
+.colour-row { display: flex; gap: 12px; align-items: flex-start; }
+.swatch-field { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; }
+.swatch-field label { font-size: 11px; color: var(--text-muted); }
+.swatch-wrap { display: flex; align-items: center; gap: 8px; }
+input[type="color"] { width: 38px; height: 32px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; padding: 2px; background: white; }
+.hex-input { width: 88px; font-family: 'DM Mono', monospace; font-size: 12px; }
+
+/* logo upload */
+.logo-upload {
+  border: 1.5px dashed var(--border); border-radius: 8px; padding: 20px;
+  text-align: center; cursor: pointer; transition: all 0.15s; background: var(--bg);
+}
+.logo-upload:hover { border-color: var(--teal); background: rgba(0,201,167,0.04); }
+.logo-upload input { display: none; }
+.logo-preview { width: 60px; height: 60px; object-fit: contain; border-radius: 6px; margin: 0 auto 8px; display: block; }
+.logo-placeholder { font-size: 28px; margin-bottom: 6px; }
+.logo-upload p { font-size: 12px; color: var(--text-muted); }
+.logo-upload strong { font-size: 13px; color: var(--text-mid); }
+
+/* preview banner */
+.preview-banner {
+  border-radius: 10px; padding: 16px 20px; display: flex;
+  align-items: center; gap: 16px; margin-top: 16px;
+}
+.preview-dot { width: 32px; height: 32px; border-radius: 6px; flex-shrink: 0; }
+.preview-text { font-size: 12px; }
+.preview-text strong { display: block; font-size: 14px; margin-bottom: 2px; }
+
+/* ── TABS ── */
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+.tab { padding: 9px 16px; font-size: 13px; cursor: pointer; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--navy); border-bottom-color: var(--navy); font-weight: 500; }
+
+/* ── TABLE ── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; padding: 10px 14px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 11px 14px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg); }
+
+/* badges */
+.badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+.badge-funder { background: #eff6ff; color: #1d4ed8; }
+.badge-host { background: var(--green-bg); color: var(--green); }
+.badge-partner { background: #fdf4ff; color: #7e22ce; }
+.badge-pending { background: var(--amber-bg); color: var(--amber); }
+.badge-active { background: var(--green-bg); color: var(--green); }
+.badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+/* row actions */
+.row-actions { display: flex; gap: 6px; opacity: 0; transition: opacity 0.15s; }
+tr:hover .row-actions { opacity: 1; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+  display: none; align-items: center; justify-content: center; z-index: 100;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--white); border-radius: 12px; width: 520px; max-width: 95vw;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+.modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.modal-header h3 { font-size: 15px; font-weight: 500; }
+.modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); line-height: 1; padding: 2px; }
+.modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+
+/* ── STATS ROW ── */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+.stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+.stat-value { font-size: 26px; font-weight: 500; color: var(--navy); line-height: 1; }
+.stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+/* ── EMPTY STATE ── */
+.empty { text-align: center; padding: 48px 20px; color: var(--text-muted); }
+.empty-icon { font-size: 36px; margin-bottom: 10px; }
+.empty p { font-size: 13px; margin-bottom: 14px; }
+
+/* ── PARTNER BADGE in table ── */
+.partner-tag { font-size: 11px; color: #7e22ce; background: #fdf4ff; border-radius: 20px; padding: 2px 8px; display: inline-block; }
+.unlinked { font-size: 11px; color: var(--text-muted); font-style: italic; }
+
+/* ── GEOGRAPHY ── */
+.postcode-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.postcode-tag { background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; font-size: 12px; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 5px; }
+.postcode-tag button { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 14px; line-height: 1; padding: 0; }
+.postcode-input-row { display: flex; gap: 8px; margin-top: 8px; }
+.postcode-input-row input { flex: 1; max-width: 140px; font-family: 'DM Mono', monospace; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <img src="PeerCo_Logo.svg" alt="PeerCo">
+    <div>
+      <span>PeerCo</span>
+      <small>ADMIN</small>
+    </div>
+  </div>
+
+  <div class="sidebar-bid-selector" onclick="showPage('bid-setup')">
+    <div class="bid-label">Active BID instance</div>
+    <div class="bid-name">Fleet Street Quarter <span>▾</span></div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">BID Setup</div>
+    <div class="nav-item active" onclick="showPage('bid-setup')">
+      <span class="nav-icon">⚙</span> BID Configuration
+    </div>
+    <div class="nav-item" onclick="showPage('organisations')">
+      <span class="nav-icon">🏢</span> Organisations
+    </div>
+    <div class="nav-item" onclick="showPage('channel-partners')">
+      <span class="nav-icon">🔗</span> Channel Partners
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Operations</div>
+    <div class="nav-item" onclick="showPage('matching')">
+      <span class="nav-icon">↔</span> Matching
+    </div>
+    <div class="nav-item" onclick="showPage('impact')">
+      <span class="nav-icon">📊</span> Impact Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('reports')">
+      <span class="nav-icon">📄</span> Reports
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ══ PAGE: BID CONFIGURATION ══ -->
+  <div id="page-bid-setup" class="page active">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">BID Configuration</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline btn-sm">Discard</button>
+        <button class="btn btn-primary btn-sm" onclick="saveConfig()">Save changes</button>
+      </div>
+    </div>
+
+    <div style="padding: 24px 28px;">
+
+      <!-- Identity -->
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-header"><h3>Identity</h3></div>
+        <div class="card-body">
+          <div class="setup-grid">
+            <div class="field">
+              <label>BID name</label>
+              <input type="text" id="bid-name" value="Fleet Street Quarter" oninput="updatePreview()">
+            </div>
+            <div class="field">
+              <label>Short name / slug</label>
+              <input type="text" id="bid-slug" value="fleet-street-quarter">
+              <span class="field-hint">Used in URLs — lowercase, hyphens only</span>
+            </div>
+            <div class="field full">
+              <label>Tagline (shown on the public-facing BID page)</label>
+              <input type="text" id="bid-tagline" value="London's home of law, media and heritage">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Branding -->
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-header"><h3>Branding</h3></div>
+        <div class="card-body">
+
+          <div class="setup-grid" style="margin-bottom: 20px;">
+            <div class="field full">
+              <label>Logo</label>
+              <div class="logo-upload" onclick="document.getElementById('logo-file').click()">
+                <input type="file" id="logo-file" accept="image/*" onchange="previewLogo(event)">
+                <div id="logo-display">
+                  <div class="logo-placeholder">🏙</div>
+                  <strong>Upload BID logo</strong>
+                  <p>SVG, PNG or JPG — will appear alongside "powered by PeerCo"</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field" style="margin-bottom: 8px;">
+            <label>Colour scheme</label>
+            <span class="field-hint">Three customisable colours — primary, secondary, and accent</span>
+          </div>
+          <div class="colour-row">
+            <div class="swatch-field">
+              <label>Primary</label>
+              <div class="swatch-wrap">
+                <input type="color" id="col-primary" value="#1a3c5e" oninput="syncHex('primary'); updatePreview()">
+                <input type="text" class="hex-input" id="hex-primary" value="#1a3c5e" oninput="syncColor('primary')">
+              </div>
+            </div>
+            <div class="swatch-field">
+              <label>Secondary</label>
+              <div class="swatch-wrap">
+                <input type="color" id="col-secondary" value="#c8a951" oninput="syncHex('secondary'); updatePreview()">
+                <input type="text" class="hex-input" id="hex-secondary" value="#c8a951" oninput="syncColor('secondary')">
+              </div>
+            </div>
+            <div class="swatch-field">
+              <label>Accent</label>
+              <div class="swatch-wrap">
+                <input type="color" id="col-accent" value="#ffffff" oninput="syncHex('accent'); updatePreview()">
+                <input type="text" class="hex-input" id="hex-accent" value="#ffffff" oninput="syncColor('accent')">
+              </div>
+            </div>
+          </div>
+
+          <!-- Live preview -->
+          <div class="preview-banner" id="preview-banner" style="background: #1a3c5e; margin-top: 16px;">
+            <div class="preview-dot" id="preview-dot" style="background: #c8a951;"></div>
+            <div class="preview-text" style="color: #ffffff;">
+              <strong id="preview-name" style="color: #ffffff;">Fleet Street Quarter</strong>
+              <span>Carbon marketplace — powered by PeerCo</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Geography -->
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-header"><h3>Geography</h3></div>
+        <div class="card-body">
+          <div class="field">
+            <label>Postcode area(s)</label>
+            <span class="field-hint">Projects and buyers must be within these postcode districts to appear in this BID's marketplace</span>
+            <div class="postcode-tags" id="postcode-tags">
+              <span class="postcode-tag">EC4A <button onclick="removePostcode(this)">×</button></span>
+              <span class="postcode-tag">EC4Y <button onclick="removePostcode(this)">×</button></span>
+              <span class="postcode-tag">EC4M <button onclick="removePostcode(this)">×</button></span>
+            </div>
+            <div class="postcode-input-row">
+              <input type="text" id="postcode-input" placeholder="e.g. EC4V" maxlength="5" onkeydown="if(event.key==='Enter')addPostcode()">
+              <button class="btn btn-outline btn-sm" onclick="addPostcode()">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ PAGE: ORGANISATIONS ══ -->
+  <div id="page-organisations" class="page">
+    <div class="topbar">
+      <div class="topbar-title">Organisations</div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline btn-sm" onclick="openModal('import-modal')">Import CSV</button>
+        <button class="btn btn-primary btn-sm" onclick="openModal('org-modal')">+ Add organisation</button>
+      </div>
+    </div>
+
+    <div style="padding: 24px 28px;">
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total</div>
+          <div class="stat-value" id="stat-total">5</div>
+          <div class="stat-sub">organisations registered</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Funding Partners</div>
+          <div class="stat-value" id="stat-funders" style="color: #1d4ed8;">2</div>
+          <div class="stat-sub">carbon buyers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Project Hosts</div>
+          <div class="stat-value" id="stat-hosts" style="color: var(--green);">3</div>
+          <div class="stat-sub">SMEs / organisations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending</div>
+          <div class="stat-value" id="stat-pending" style="color: var(--amber);">1</div>
+          <div class="stat-sub">awaiting onboarding</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>All organisations — Fleet Street Quarter</h3>
+          <div style="display:flex; gap:8px;">
+            <select style="width:auto; font-size:12px; padding:5px 10px;" onchange="filterOrgs(this.value)">
+              <option value="all">All types</option>
+              <option value="funder">Funding Partners</option>
+              <option value="host">Project Hosts</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="orgs-table">
+            <thead>
+              <tr>
+                <th>Organisation</th>
+                <th>Type</th>
+                <th>Channel partner</th>
+                <th>Status</th>
+                <th>Added</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="orgs-tbody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: CHANNEL PARTNERS ══ -->
+  <div id="page-channel-partners" class="page">
+    <div class="topbar">
+      <div class="topbar-title">Channel Partners</div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary btn-sm" onclick="openModal('partner-modal')">+ Add channel partner</button>
+      </div>
+    </div>
+
+    <div style="padding: 24px 28px;">
+      <div class="card">
+        <div class="card-header"><h3>Channel partners — Fleet Street Quarter</h3></div>
+        <div class="table-wrap">
+          <table id="partners-table">
+            <thead>
+              <tr>
+                <th>Partner name</th>
+                <th>Contact</th>
+                <th>Project hosts linked</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="partners-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: IMPACT ══ -->
+  <div id="page-impact" class="page">
+    <div class="topbar"><div class="topbar-title">Impact Dashboard</div></div>
+    <div style="padding: 24px 28px;">
+      <div class="stats-row" style="grid-template-columns: repeat(3,1fr);">
+        <div class="stat-card"><div class="stat-label">Carbon avoided</div><div class="stat-value">0.0</div><div class="stat-sub">tCO₂e to date</div></div>
+        <div class="stat-card"><div class="stat-label">Projects live</div><div class="stat-value">0</div><div class="stat-sub">installations active</div></div>
+        <div class="stat-card"><div class="stat-label">Funding deployed</div><div class="stat-value">£0</div><div class="stat-sub">total committed</div></div>
+      </div>
+      <div class="card"><div class="card-body empty"><div class="empty-icon">📊</div><p>No live projects yet. Impact data will appear once the first project is installed and connected.</p></div></div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: MATCHING ══ -->
+  <div id="page-matching" class="page">
+    <div class="topbar"><div class="topbar-title">Matching</div></div>
+    <div style="padding: 24px 28px;">
+      <div class="card"><div class="card-body empty"><div class="empty-icon">↔</div><p>Matching tools will appear once you have both funding partners and project hosts registered.</p></div></div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: REPORTS ══ -->
+  <div id="page-reports" class="page">
+    <div class="topbar"><div class="topbar-title">Reports</div></div>
+    <div style="padding: 24px 28px;">
+      <div class="card"><div class="card-body empty"><div class="empty-icon">📄</div><p>BID-branded impact reports will be available once projects are live.</p></div></div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ══ MODAL: ADD ORGANISATION ══ -->
+<div class="modal-overlay" id="org-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add organisation</h3>
+      <button class="modal-close" onclick="closeModal('org-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Organisation name</label>
+        <input type="text" id="org-name" placeholder="e.g. St Bride's Foundation">
+      </div>
+      <div class="field">
+        <label>Type</label>
+        <select id="org-type" onchange="togglePartnerField()">
+          <option value="">Select type…</option>
+          <option value="funder">Funding Partner (carbon buyer)</option>
+          <option value="host">Project Host (SME / organisation)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Primary contact name</label>
+        <input type="text" id="org-contact" placeholder="Full name">
+      </div>
+      <div class="field">
+        <label>Contact email</label>
+        <input type="email" id="org-email" placeholder="email@organisation.com">
+      </div>
+      <div class="field" id="partner-field" style="display:none;">
+        <label>Channel partner (optional)</label>
+        <select id="org-partner">
+          <option value="">— None / direct —</option>
+          <option value="bipin">Bipin Energy Solutions</option>
+        </select>
+        <span class="field-hint">Leave blank if this project host came to PeerCo directly</span>
+      </div>
+      <div class="field">
+        <label>Notes (internal only)</label>
+        <textarea id="org-notes" placeholder="e.g. referred by FSQ, planning LED upgrade in Q3"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('org-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addOrg()">Add organisation</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: ADD CHANNEL PARTNER ══ -->
+<div class="modal-overlay" id="partner-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add channel partner</h3>
+      <button class="modal-close" onclick="closeModal('partner-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Company name</label>
+        <input type="text" id="cp-name" placeholder="e.g. Bipin Energy Solutions">
+      </div>
+      <div class="field">
+        <label>Contact name</label>
+        <input type="text" id="cp-contact" placeholder="Full name">
+      </div>
+      <div class="field">
+        <label>Contact email</label>
+        <input type="email" id="cp-email" placeholder="email@company.com">
+      </div>
+      <div class="field">
+        <label>Specialism</label>
+        <select id="cp-type">
+          <option value="">Select…</option>
+          <option value="solar">Solar PV</option>
+          <option value="led">LED lighting</option>
+          <option value="hvac">Heat pumps / HVAC</option>
+          <option value="multi">Multiple technologies</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Notes</label>
+        <textarea id="cp-notes" placeholder="e.g. Active in EC4 area, known contact through FSQ"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('partner-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addPartner()">Add channel partner</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: LINK PARTNER ══ -->
+<div class="modal-overlay" id="link-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="link-modal-title">Assign channel partner</h3>
+      <button class="modal-close" onclick="closeModal('link-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:4px;">Assigning a channel partner for:</p>
+      <p style="font-size:14px; font-weight:500; margin-bottom:16px;" id="link-org-name">—</p>
+      <div class="field">
+        <label>Channel partner</label>
+        <select id="link-partner-select">
+          <option value="">— None / direct —</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('link-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLink()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: IMPORT ══ -->
+<div class="modal-overlay" id="import-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Import organisations from CSV</h3>
+      <button class="modal-close" onclick="closeModal('import-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px; color:var(--text-muted);">CSV should include columns: <span style="font-family:'DM Mono',monospace; font-size:12px; background:var(--bg); padding:2px 6px; border-radius:4px;">name, type, contact_name, contact_email</span></p>
+      <div class="logo-upload" style="margin-top:8px;" onclick="document.getElementById('csv-file').click()">
+        <input type="file" id="csv-file" accept=".csv">
+        <div class="logo-placeholder">📂</div>
+        <strong>Choose CSV file</strong>
+        <p>or drag and drop</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('import-modal')">Cancel</button>
+      <button class="btn btn-primary">Import</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+let orgs = [
+  { id: 1, name: 'Freshfields Bruckhaus Deringer', type: 'funder', contact: 'Sarah Chen', email: 'schen@freshfields.com', partner: null, status: 'active', added: '12 Apr 2026', notes: '' },
+  { id: 2, name: 'News UK', type: 'funder', contact: 'James Okafor', email: 'jokafor@news.co.uk', partner: null, status: 'active', added: '14 Apr 2026', notes: '' },
+  { id: 3, name: "St Bride's Foundation", type: 'host', contact: 'Maria Lopez', email: 'mlopez@stbrides.com', partner: null, status: 'pending', added: '28 Apr 2026', notes: 'LED dimmer strip upgrade — awaiting installer spec' },
+  { id: 4, name: 'El Vino Wine Bar', type: 'host', contact: 'Tom Bell', email: 'tom@elvino.co.uk', partner: 'Bipin Energy Solutions', status: 'active', added: '2 May 2026', notes: '' },
+  { id: 5, name: 'Punch Tavern', type: 'host', contact: 'Alice Grant', email: 'alice@punchtavern.com', partner: 'Bipin Energy Solutions', status: 'active', added: '3 May 2026', notes: '' },
+];
+
+let partners = [
+  { id: 1, name: 'Bipin Energy Solutions', contact: 'Bipin Patel', email: 'bipin@bipinenergy.co.uk', specialism: 'LED lighting', status: 'active', added: '1 Apr 2026', notes: '' },
+];
+
+let linkingOrgId = null;
+
+// ── NAVIGATION ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (id === 'organisations') renderOrgs();
+  if (id === 'channel-partners') renderPartners();
+}
+
+// ── BID CONFIG ──
+function syncHex(name) {
+  document.getElementById('hex-' + name).value = document.getElementById('col-' + name).value;
+}
+function syncColor(name) {
+  const val = document.getElementById('hex-' + name).value;
+  if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+    document.getElementById('col-' + name).value = val;
+    updatePreview();
+  }
+}
+function updatePreview() {
+  const primary = document.getElementById('col-primary').value;
+  const secondary = document.getElementById('col-secondary').value;
+  const accent = document.getElementById('col-accent').value;
+  const name = document.getElementById('bid-name').value || 'BID Name';
+  document.getElementById('preview-banner').style.background = primary;
+  document.getElementById('preview-dot').style.background = secondary;
+  document.getElementById('preview-name').style.color = accent;
+  document.getElementById('preview-banner').querySelector('span').style.color = accent + 'bb';
+  document.getElementById('preview-name').textContent = name;
+}
+function previewLogo(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  document.getElementById('logo-display').innerHTML = `<img src="${url}" class="logo-preview"><strong>${file.name}</strong><p>Click to replace</p>`;
+}
+function addPostcode() {
+  const input = document.getElementById('postcode-input');
+  const val = input.value.trim().toUpperCase();
+  if (!val) return;
+  const tag = document.createElement('span');
+  tag.className = 'postcode-tag';
+  tag.innerHTML = `${val} <button onclick="removePostcode(this)">×</button>`;
+  document.getElementById('postcode-tags').appendChild(tag);
+  input.value = '';
+}
+function removePostcode(btn) { btn.parentElement.remove(); }
+function saveConfig() {
+  alert('Configuration saved for Fleet Street Quarter.');
+}
+
+// ── ORGS TABLE ──
+function renderOrgs(filter = 'all') {
+  const tbody = document.getElementById('orgs-tbody');
+  const filtered = filter === 'all' ? orgs : orgs.filter(o => o.type === filter);
+  tbody.innerHTML = filtered.map(o => `
+    <tr>
+      <td>
+        <div style="font-weight:500;">${o.name}</div>
+        <div style="font-size:11px; color:var(--text-muted);">${o.contact} · ${o.email}</div>
+        ${o.notes ? `<div style="font-size:11px; color:var(--amber); margin-top:2px;">📝 ${o.notes}</div>` : ''}
+      </td>
+      <td><span class="badge badge-${o.type === 'funder' ? 'funder' : 'host'}"><span class="badge-dot"></span>${o.type === 'funder' ? 'Funding Partner' : 'Project Host'}</span></td>
+      <td>${o.type === 'host' ? (o.partner ? `<span class="partner-tag">${o.partner}</span>` : `<span class="unlinked">— none</span> <button class="btn btn-outline btn-sm" style="font-size:11px; padding:2px 7px;" onclick="openLinkModal(${o.id})">Assign</button>`) : '<span style="color:var(--text-muted); font-size:12px;">n/a</span>'}</td>
+      <td><span class="badge badge-${o.status}">${o.status === 'active' ? '● Active' : '◌ Pending'}</span></td>
+      <td style="color:var(--text-muted); font-size:12px;">${o.added}</td>
+      <td>
+        <div class="row-actions">
+          <button class="btn btn-outline btn-sm" onclick="editOrg(${o.id})">Edit</button>
+          ${o.type === 'host' ? `<button class="btn btn-outline btn-sm" onclick="openLinkModal(${o.id})">Partner</button>` : ''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+  updateStats();
+}
+
+function filterOrgs(val) { renderOrgs(val); }
+
+function updateStats() {
+  document.getElementById('stat-total').textContent = orgs.length;
+  document.getElementById('stat-funders').textContent = orgs.filter(o => o.type === 'funder').length;
+  document.getElementById('stat-hosts').textContent = orgs.filter(o => o.type === 'host').length;
+  document.getElementById('stat-pending').textContent = orgs.filter(o => o.status === 'pending').length;
+}
+
+function addOrg() {
+  const name = document.getElementById('org-name').value.trim();
+  const type = document.getElementById('org-type').value;
+  const contact = document.getElementById('org-contact').value.trim();
+  const email = document.getElementById('org-email').value.trim();
+  const partner = document.getElementById('org-partner').value || null;
+  const notes = document.getElementById('org-notes').value.trim();
+  if (!name || !type) { alert('Please enter a name and select a type.'); return; }
+  const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  orgs.push({ id: Date.now(), name, type, contact, email, partner: partner || null, status: 'pending', added: today, notes });
+  closeModal('org-modal');
+  renderOrgs();
+  ['org-name','org-contact','org-email','org-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('org-type').value = '';
+  document.getElementById('org-partner').value = '';
+}
+
+function editOrg(id) {
+  const o = orgs.find(x => x.id === id);
+  if (!o) return;
+  document.getElementById('org-name').value = o.name;
+  document.getElementById('org-type').value = o.type;
+  document.getElementById('org-contact').value = o.contact;
+  document.getElementById('org-email').value = o.email;
+  document.getElementById('org-notes').value = o.notes;
+  togglePartnerField();
+  openModal('org-modal');
+}
+
+function togglePartnerField() {
+  const type = document.getElementById('org-type').value;
+  document.getElementById('partner-field').style.display = type === 'host' ? 'flex' : 'none';
+}
+
+// ── LINK MODAL ──
+function openLinkModal(orgId) {
+  linkingOrgId = orgId;
+  const o = orgs.find(x => x.id === orgId);
+  document.getElementById('link-org-name').textContent = o.name;
+  const sel = document.getElementById('link-partner-select');
+  sel.innerHTML = '<option value="">— None / direct —</option>' +
+    partners.map(p => `<option value="${p.name}" ${o.partner === p.name ? 'selected' : ''}>${p.name}</option>`).join('');
+  openModal('link-modal');
+}
+
+function saveLink() {
+  const o = orgs.find(x => x.id === linkingOrgId);
+  if (o) o.partner = document.getElementById('link-partner-select').value || null;
+  closeModal('link-modal');
+  renderOrgs();
+}
+
+// ── PARTNERS TABLE ──
+function renderPartners() {
+  const tbody = document.getElementById('partners-tbody');
+  if (partners.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-icon">🔗</div><p>No channel partners added yet.</p></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = partners.map(p => {
+    const linked = orgs.filter(o => o.partner === p.name);
+    return `
+      <tr>
+        <td>
+          <div style="font-weight:500;">${p.name}</div>
+          <div style="font-size:11px; color:var(--text-muted);">${p.specialism || ''}</div>
+        </td>
+        <td>
+          <div style="font-size:13px;">${p.contact}</div>
+          <div style="font-size:11px; color:var(--text-muted);">${p.email}</div>
+        </td>
+        <td>
+          ${linked.length === 0
+            ? '<span style="color:var(--text-muted); font-size:12px;">None yet</span>'
+            : linked.map(o => `<span class="badge badge-host" style="margin:2px;">${o.name}</span>`).join(' ')}
+        </td>
+        <td><span class="badge badge-${p.status}">● ${p.status}</span></td>
+        <td>
+          <div class="row-actions">
+            <button class="btn btn-outline btn-sm">Edit</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function addPartner() {
+  const name = document.getElementById('cp-name').value.trim();
+  const contact = document.getElementById('cp-contact').value.trim();
+  const email = document.getElementById('cp-email').value.trim();
+  const specialism = document.getElementById('cp-type').options[document.getElementById('cp-type').selectedIndex]?.text || '';
+  if (!name) { alert('Please enter a company name.'); return; }
+  partners.push({ id: Date.now(), name, contact, email, specialism, status: 'active', added: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }), notes: '' });
+  // also add to the partner dropdowns
+  const opt = document.createElement('option');
+  opt.value = name; opt.textContent = name;
+  document.getElementById('org-partner').appendChild(opt);
+  closeModal('partner-modal');
+  renderPartners();
+  ['cp-name','cp-contact','cp-email','cp-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('cp-type').value = '';
+}
+
+// ── MODAL HELPERS ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ── INIT ──
+renderOrgs();
+</script>
+</body>
+</html>

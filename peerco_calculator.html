@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PeerCo — Project Savings Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #00c9a7;
+    --green-light: #e0faf6;
+    --green-mid: #00b596;
+    --green-pale: #f0fdfb;
+    --navy: #0b1d3a;
+    --navy-mid: #132a50;
+    --navy-light: #1e3d6b;
+    --slate: #111827;
+    --slate-mid: #374151;
+    --slate-light: #6b7280;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --amber: #b45309;
+    --amber-bg: #fffbeb;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--slate);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    background: var(--navy);
+    border-bottom: 1px solid var(--navy-light);
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-text { color: white !important; }
+  .logo-sub { color: rgba(255,255,255,0.5) !important; }
+  /* logo mark replaced by img */  .logo-mark svg { width: 16px; height: 16px; }
+  .logo-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--slate);
+    letter-spacing: -0.02em;
+  }
+  .logo-sub {
+    font-size: 12px;
+    color: var(--slate-light);
+    margin-left: auto;
+    font-weight: 300;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #061122 100%);
+    color: white;
+    padding: 60px 40px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -80px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: 20%;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+  }
+  .hero-inner { max-width: 680px; margin: 0 auto; position: relative; }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    margin-bottom: 20px;
+    color: rgba(255,255,255,0.85);
+  }
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #00e5c3;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 44px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: #00e5c3;
+  }
+  .hero p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.75);
+    font-weight: 300;
+    max-width: 520px;
+  }
+
+  /* ─── MAIN ─── */
+  main {
+    max-width: 760px;
+    margin: -30px auto 0;
+    padding: 0 20px 80px;
+    position: relative;
+  }
+
+  /* ─── TECH TABS ─── */
+  .tech-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .tech-tab {
+    flex: 1;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .tech-tab:hover { border-color: var(--navy-light); }
+  .tech-tab.active {
+    border-color: var(--navy);
+    background: #f0f4ff;
+    box-shadow: 0 0 0 1px var(--navy);
+  }
+  .tech-tab .tab-icon {
+    font-size: 22px;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .tech-tab .tab-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--slate);
+    display: block;
+  }
+  .tech-tab .tab-hint {
+    font-size: 11px;
+    color: var(--slate-light);
+  }
+
+  /* ─── CARD ─── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--slate-light);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+  }
+
+  /* ─── FORM ─── */
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.full { grid-column: 1 / -1; }
+  label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--slate-mid);
+    letter-spacing: 0.01em;
+  }
+  input[type="number"],
+  select {
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--slate);
+    background: var(--white);
+    width: 100%;
+    transition: border 0.15s;
+    -webkit-appearance: none;
+  }
+  input[type="number"]:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(0,181,150,0.15);
+  }
+  .field-hint {
+    font-size: 11px;
+    color: var(--slate-light);
+    line-height: 1.4;
+  }
+
+  /* ─── SLIDER ─── */
+  .slider-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .slider-row { display: flex; align-items: center; gap: 12px; }
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--navy);
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
+  .slider-val {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--navy);
+    min-width: 52px;
+    text-align: right;
+  }
+
+  /* ─── RESULTS ─── */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .result-metric {
+    background: var(--green-pale);
+    border: 1px solid rgba(26,107,60,0.12);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .result-metric.highlight {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: white;
+  }
+  .metric-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--slate-light);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .result-metric.highlight .metric-label { color: rgba(255,255,255,0.65); }
+  .metric-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .result-metric.highlight .metric-value { color: #00e5c3; }
+  .metric-unit {
+    font-size: 11px;
+    color: var(--slate-light);
+  }
+  .result-metric.highlight .metric-unit { color: rgba(255,255,255,0.6); }
+
+  /* ─── BREAKDOWN BAR ─── */
+
+
+
+  .bd-item { font-size: 12px; color: var(--slate-mid); }
+  .bd-item span { font-weight: 500; color: var(--slate); }
+
+  /* ─── DISCLAIMER ─── */
+  .disclaimer {
+    background: var(--amber-bg);
+    border: 1px solid #f0d070;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 12px;
+    color: var(--amber);
+    line-height: 1.5;
+    display: flex;
+    gap: 10px;
+  }
+  .disclaimer::before {
+    content: '~';
+    font-size: 18px;
+    font-weight: 300;
+    flex-shrink: 0;
+    line-height: 1.2;
+  }
+
+  /* ─── CTA ─── */
+  .cta-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    flex: 1;
+    min-width: 200px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: -0.01em;
+  }
+  .btn-primary:hover { background: var(--navy-light); }
+  .btn-primary:active { transform: scale(0.99); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--navy);
+    border: 1px solid var(--navy);
+    border-radius: 10px;
+    padding: 14px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-secondary:hover { background: #f0f4ff; }
+
+  /* ─── WHAT NEXT STEPS ─── */
+  .steps-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .step-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .step-num {
+    width: 22px; height: 22px;
+    background: var(--navy);
+    color: white;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 8px;
+  }
+  .step-item p { font-size: 12px; color: var(--slate-mid); line-height: 1.5; }
+
+  /* ─── TECH PANEL TOGGLE ─── */
+  .tech-panel { display: none; }
+  .tech-panel.visible { display: block; }
+
+  /* ─── SECTION DIVIDER ─── */
+  .section-rule {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 40px 20px 60px; }
+    .hero h1 { font-size: 32px; }
+    main { padding: 0 12px 60px; }
+    .field-grid { grid-template-columns: 1fr; }
+    .results-grid { grid-template-columns: 1fr 1fr; }
+    .tech-tabs { flex-direction: column; }
+    .steps-row { grid-template-columns: 1fr; }
+    header { padding: 14px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="PeerCo_Logo.svg" alt="PeerCo" style="height: 36px; width: 36px; object-fit: contain; border-radius: 6px;">
+  <span class="logo-text">PeerCo</span>
+  <span class="logo-sub">Estimate your project's value</span>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Quick estimate — no account needed</div>
+    <h1>See what your<br><em>green upgrade</em> is worth</h1>
+    <p>By installing green technology, you generate environmental certificates that a local company can buy — helping fund your project while cutting carbon in your area. Enter your details below to see what your upgrade could be worth.</p>
+  </div>
+</div>
+
+<main>
+
+  <!-- STEP 1: CHOOSE TECH -->
+  <div class="card">
+    <div class="card-title">Step 1 — What are you installing?</div>
+    <div class="tech-tabs">
+      <button class="tech-tab active" onclick="setTech('led')">
+        <span class="tab-icon">💡</span>
+        <span class="tab-name">LED lighting</span>
+        <span class="tab-hint">Replacing old fittings</span>
+      </button>
+      <button class="tech-tab" onclick="setTech('solar')">
+        <span class="tab-icon">☀️</span>
+        <span class="tab-name">Solar PV</span>
+        <span class="tab-hint">Rooftop generation</span>
+      </button>
+      <button class="tech-tab" onclick="setTech('hvac')">
+        <span class="tab-icon">❄️</span>
+        <span class="tab-name">Heat pump / HVAC</span>
+        <span class="tab-hint">Heating & cooling upgrade</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2: LED INPUTS -->
+  <div id="panel-led" class="tech-panel visible">
+    <div class="card">
+      <div class="card-title">Step 2 — Tell us about your building</div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="bldg-type">Building type</label>
+          <select id="bldg-type" onchange="calc()">
+            <option value="office">Office</option>
+            <option value="retail">Retail / shop</option>
+            <option value="cultural" selected>Cultural / heritage</option>
+            <option value="light-manuf">Light industrial</option>
+            <option value="food">Food & hospitality</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="floor-area">Approximate floor area (m²)</label>
+          <input type="number" id="floor-area" value="500" min="50" max="20000" onchange="calc()" oninput="calc()">
+          <span class="field-hint">Rough figure is fine — an A4 room is ~12m²</span>
+        </div>
+        <div class="field">
+          <label for="gb-region">GB grid region</label>
+          <select id="gb-region" onchange="calc()">
+            <option value="london" selected>London</option>
+            <option value="south-east">South East England</option>
+            <option value="south-west">South West England</option>
+            <option value="east">East England</option>
+            <option value="east-mid">East Midlands</option>
+            <option value="west-mid">West Midlands</option>
+            <option value="yorkshire">Yorkshire</option>
+            <option value="north-west">North West England</option>
+            <option value="north-east">North East England</option>
+            <option value="scotland">Scotland</option>
+            <option value="wales">Wales</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="hours-use">Hours lit per day</label>
+          <input type="number" id="hours-use" value="10" min="1" max="24" onchange="calc()" oninput="calc()">
+          <span class="field-hint">Typical office: 10h. Retail: 12h. 24h venue: 18h.</span>
+        </div>
+      </div>
+
+      <div class="section-rule"></div>
+      <div class="card-title">Lighting details (or leave as defaults)</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Current wattage per fitting (W)</label>
+          <div class="slider-wrap">
+            <div class="slider-row">
+              <input type="range" id="old-w" min="20" max="150" value="58" oninput="calc(); document.getElementById('old-w-val').textContent=this.value+'W'">
+              <span class="slider-val" id="old-w-val">58W</span>
+            </div>
+            <span class="field-hint">Typical T8 fluorescent tube: 58W. Halogen: 50–100W. Dimmer strip: 40–60W.</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>LED replacement wattage (W)</label>
+          <div class="slider-wrap">
+            <div class="slider-row">
+              <input type="range" id="new-w" min="5" max="60" value="18" oninput="calc(); document.getElementById('new-w-val').textContent=this.value+'W'">
+              <span class="slider-val" id="new-w-val">18W</span>
+            </div>
+            <span class="field-hint">LED tube replacement: 16–22W. LED panel: 24–36W.</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Estimated number of fittings</label>
+          <input type="number" id="fittings" value="60" min="1" max="5000" onchange="calc()" oninput="calc()">
+          <span class="field-hint">A 500m² office typically has 50–80 fittings.</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: SOLAR INPUTS -->
+  <div id="panel-solar" class="tech-panel">
+    <div class="card">
+      <div class="card-title">Step 2 — Tell us about your solar project</div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="solar-kwp">System size (kWp)</label>
+          <input type="number" id="solar-kwp" value="40" min="1" max="1000" onchange="calc()" oninput="calc()">
+          <span class="field-hint">A typical London office rooftop: 20–60kWp. 1kWp ≈ 10m² of panels.</span>
+        </div>
+        <div class="field">
+          <label for="solar-region">Location</label>
+          <select id="solar-region" onchange="calc()">
+            <option value="uk" selected>United Kingdom (London/SE: 1,020 kWh/kWp/yr)</option>
+            <option value="uk-sw">UK — South West (1,060 kWh/kWp/yr)</option>
+            <option value="nigeria">Nigeria (1,355 kWh/kWp/yr)</option>
+            <option value="south-africa">South Africa (1,873 kWh/kWp/yr)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>EAC price estimate (£/MWh)</label>
+          <div class="slider-wrap">
+            <div class="slider-row">
+              <input type="range" id="eac-price" min="5" max="40" value="15" oninput="calc(); document.getElementById('eac-price-val').textContent='£'+this.value">
+              <span class="slider-val" id="eac-price-val">£15</span>
+            </div>
+            <span class="field-hint">Current UK REGO / IREC market: £10–£20/MWh. Varies by buyer demand.</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: HVAC INPUTS -->
+  <div id="panel-hvac" class="tech-panel">
+    <div class="card">
+      <div class="card-title">Step 2 — Tell us about your heating/cooling project</div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="hvac-area">Area to condition (m²)</label>
+          <input type="number" id="hvac-area" value="500" min="50" max="20000" onchange="calc()" oninput="calc()">
+        </div>
+        <div class="field">
+          <label for="hvac-type">Current heating system</label>
+          <select id="hvac-type" onchange="calc()">
+            <option value="gas">Gas boiler</option>
+            <option value="oil">Oil heating</option>
+            <option value="electric">Old electric resistance</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="hvac-region">GB grid region</label>
+          <select id="hvac-region" onchange="calc()">
+            <option value="london" selected>London</option>
+            <option value="south-east">South East England</option>
+            <option value="yorkshire">Yorkshire</option>
+            <option value="scotland">Scotland</option>
+            <option value="wales">Wales</option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="card" id="results-card">
+    <div class="card-title">Your estimated annual impact</div>
+
+    <div class="results-grid">
+      <div class="result-metric highlight">
+        <div class="metric-label">EAC income (your share)</div>
+        <div class="metric-value" id="r-eac">£—</div>
+        <div class="metric-unit">per year</div>
+      </div>
+      <div class="result-metric">
+        <div class="metric-label">Energy bill saving</div>
+        <div class="metric-value" id="r-saving">—</div>
+        <div class="metric-unit">per year</div>
+      </div>
+      <div class="result-metric">
+        <div class="metric-label">Carbon avoided</div>
+        <div class="metric-value" id="r-carbon">—</div>
+        <div class="metric-unit">tCO₂e / year</div>
+      </div>
+    </div>
+
+      <div class="bar-wrap">
+      </div>
+      <div class="breakdown-items">
+      </div>
+    </div>
+
+    <div class="disclaimer" id="disclaimer">
+      These are indicative estimates only, based on typical building profiles and current grid carbon intensity data. Actual savings depend on your installer's specification. The next step is to get a quote — we'll then calculate your exact EAC income figure.
+    </div>
+
+    <div class="cta-row">
+      <button class="btn-primary" onclick="alert('This would open the PeerCo registration / project enquiry form')">
+        Register your project →
+      </button>
+      <button class="btn-secondary" onclick="alert('This would offer a PDF summary to share with your installer or consultant')">
+        Download summary
+      </button>
+    </div>
+
+    <div class="section-rule"></div>
+    <div class="card-title">What happens next</div>
+    <div class="steps-row">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <p>Tell us more about your site — your installer's spec will lock in the exact figures</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <p>PeerCo matches you with a funding partner who buys your EACs upfront</p>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <p>Technology installed, verified, and connected — we handle the carbon accounting</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ── CONSTANTS FROM SPREADSHEETS ──
+const CI_BY_REGION = { // gCO2e/kWh, from Jan15th CI Data (representative annual averages)
+  'london': 92, 'south-east': 95, 'south-west': 142, 'east': 72,
+  'east-mid': 185, 'west-mid': 140, 'yorkshire': 140, 'north-west': 55,
+  'north-east': 20, 'scotland': 8, 'wales': 150
+};
+const ELEC_PRICE_GBP = 0.28; // £/kWh current UK SME rate
+const EAC_PRICE_GBP = 0.015; // £/kWh = £15/MWh default
+const SOLAR_YIELD = { 'uk': 1020, 'uk-sw': 1060, 'nigeria': 1355, 'south-africa': 1873 };
+const SOLAR_CI = { 'uk': 200, 'uk-sw': 200, 'nigeria': 378, 'south-africa': 700 };
+const IREC_ANNUAL_COST = 20; // amortised registration + issuance fees
+const INVERTER_EFF = 0.9;
+// kWh/m²/yr electricity baseline by building type (from EIA / CIBSE Guide F)
+const BLDG_BASE_KWH = {
+  'office': 130, 'retail': 220, 'cultural': 95, 'light-manuf': 185, 'food': 380
+};
+// Heating energy by system type (kWh/m²/yr electric equiv.)
+const HVAC_BASE = { 'gas': 120, 'oil': 140, 'electric': 200 };
+const HVAC_HP_FACTOR = 0.35; // heat pump uses ~35% of old electric equiv energy
+
+let currentTech = 'led';
+
+function setTech(t) {
+  currentTech = t;
+  ['led','solar','hvac'].forEach(x => {
+    document.getElementById('panel-'+x).classList.toggle('visible', x === t);
+    document.querySelectorAll('.tech-tab')[['led','solar','hvac'].indexOf(x)]
+      .classList.toggle('active', x === t);
+  });
+  calc();
+}
+
+function fmt(n) {
+  if (n >= 1000) return '£' + Math.round(n).toLocaleString();
+  if (n >= 100) return '£' + Math.round(n);
+  return '£' + n.toFixed(0);
+}
+function fmtKwh(n) {
+  if (n >= 1000) return Math.round(n/100)*100 + ' kWh';
+  return Math.round(n) + ' kWh';
+}
+
+function calc() {
+  let eacIncome = 0, billSaving = 0, carbonAvoided = 0, kwhBefore = 0, kwhAfter = 0;
+
+  if (currentTech === 'led') {
+    const fittings = +document.getElementById('fittings').value || 60;
+    const oldW = +document.getElementById('old-w').value || 58;
+    const newW = +document.getElementById('new-w').value || 18;
+    const hours = +document.getElementById('hours-use').value || 10;
+    const split = 0.8;
+    const region = document.getElementById('gb-region').value;
+    const ci = CI_BY_REGION[region] || 92; // gCO2e/kWh
+
+    const days = 260; // working days approx; cultural/heritage may differ
+    kwhBefore = (fittings * oldW / 1000) * hours * 365;
+    kwhAfter  = (fittings * newW / 1000) * hours * 365;
+    const kwhSaved = kwhBefore - kwhAfter;
+    const mwhSaved = kwhSaved / 1000;
+
+    billSaving = kwhSaved * ELEC_PRICE_GBP;
+    carbonAvoided = (kwhSaved * ci) / 1e6; // tonnes
+    eacIncome = mwhSaved * 15 * split; // £15/MWh EAC price
+
+    const pct = kwhBefore > 0 ? Math.min(100, Math.round((kwhSaved/kwhBefore)*100)) : 0;
+
+  } else if (currentTech === 'hvac') {
+    const area = +document.getElementById('hvac-area').value || 500;
+    const type = document.getElementById('hvac-type').value;
+    const region = document.getElementById('hvac-region').value;
+    const split = 0.8;
+    const ci = CI_BY_REGION[region] || 92;
+
+    const baseKwh = area * HVAC_BASE[type];
+    const hpKwh = baseKwh * HVAC_HP_FACTOR;
+    kwhBefore = baseKwh;
+    kwhAfter = hpKwh;
+    const kwhSaved = baseKwh - hpKwh;
+    const mwhSaved = kwhSaved / 1000;
+
+    billSaving = kwhSaved * ELEC_PRICE_GBP;
+    carbonAvoided = (kwhSaved * ci) / 1e6;
+    eacIncome = mwhSaved * 15 * split;
+
+    const pct = Math.min(100, Math.round((kwhSaved/baseKwh)*100));
+  }
+
+  document.getElementById('r-eac').textContent    = eacIncome > 0 ? fmt(eacIncome) : '—';
+  document.getElementById('r-saving').textContent = billSaving > 0 ? fmt(billSaving) : '—';
+  document.getElementById('r-carbon').textContent = carbonAvoided > 0 ? carbonAvoided.toFixed(1) : '—';
+}
+
+// Run on load
+calc();
+</script>
+</body>
+</html>

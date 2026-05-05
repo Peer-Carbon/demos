@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fleet Street Quarter — Local Carbon Market</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bid: #1a3c5e;
+  --gold: #c8a951;
+  --teal: #00c9a7;
+  --navy: #0b1d3a;
+  --bg: #f8f9fb;
+  --white: #ffffff;
+  --border: #e2e8f0;
+  --text: #111827;
+  --muted: #6b7280;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
+
+nav {
+  background: var(--bid); padding: 0 40px; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+}
+.nav-bid { color: white; font-size: 16px; font-weight: 500; }
+.nav-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.2); margin: 0 12px; }
+.nav-sub { font-size: 12px; color: rgba(255,255,255,0.4); }
+.nav-right { display: flex; gap: 10px; align-items: center; }
+.nav-link { color: rgba(255,255,255,0.65); font-size: 13px; padding: 6px 10px; border-radius: 6px; cursor: pointer; transition: all .15s; }
+.nav-link:hover { color: white; background: rgba(255,255,255,.1); }
+.nav-cta { background: var(--gold); color: var(--bid); font-weight: 500; font-size: 13px; padding: 8px 16px; border-radius: 7px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: filter .15s; }
+.nav-cta:hover { filter: brightness(1.06); }
+
+.hero { background: var(--bid); padding: 80px 40px 90px; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -100px; right: -80px; width: 450px; height: 450px; border-radius: 50%; background: rgba(200,169,81,.07); }
+.hero-inner { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; }
+.hero-badge { display: inline-flex; align-items: center; gap: 7px; background: rgba(200,169,81,.15); border: 1px solid rgba(200,169,81,.3); border-radius: 20px; padding: 5px 14px; font-size: 12px; color: var(--gold); margin-bottom: 18px; width: fit-content; }
+.hero-badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+.hero h1 { font-family: 'DM Serif Display', serif; font-size: 42px; line-height: 1.1; color: white; font-weight: 400; letter-spacing: -.02em; margin-bottom: 16px; }
+.hero h1 em { font-style: italic; color: var(--gold); }
+.hero-sub { font-size: 15px; line-height: 1.65; color: rgba(255,255,255,.7); font-weight: 300; margin-bottom: 28px; max-width: 440px; }
+.hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-gold { background: var(--gold); color: var(--bid); font-weight: 500; font-size: 14px; padding: 12px 22px; border-radius: 9px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: filter .15s; }
+.btn-gold:hover { filter: brightness(1.06); }
+.btn-ghost { background: transparent; color: rgba(255,255,255,.85); font-size: 14px; padding: 12px 22px; border-radius: 9px; border: 1px solid rgba(255,255,255,.25); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s; }
+.btn-ghost:hover { border-color: rgba(255,255,255,.5); color: white; }
+
+.hero-stats { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 28px; }
+.hs-title { font-size: 11px; font-weight: 500; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 20px; }
+.hs-row { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,.07); display: flex; justify-content: space-between; align-items: baseline; }
+.hs-row:last-child { border-bottom: none; padding-bottom: 0; }
+.hs-label { font-size: 13px; color: rgba(255,255,255,.55); }
+.hs-val { font-family: 'DM Serif Display', serif; font-size: 26px; color: white; }
+.hs-unit { font-size: 12px; color: rgba(255,255,255,.4); margin-left: 3px; }
+.hs-badge { font-size: 11px; color: var(--gold); background: rgba(200,169,81,.12); padding: 2px 9px; border-radius: 10px; }
+
+section { padding: 64px 40px; }
+.section-inner { max-width: 960px; margin: 0 auto; }
+.eyebrow { font-size: 11px; font-weight: 500; color: var(--teal); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
+.section-h { font-family: 'DM Serif Display', serif; font-size: 32px; font-weight: 400; letter-spacing: -.02em; margin-bottom: 12px; }
+.section-sub { font-size: 15px; color: var(--muted); line-height: 1.6; max-width: 540px; }
+
+.how-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 18px; margin-top: 36px; }
+.how-card { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 26px; transition: all .2s; cursor: pointer; }
+.how-card:hover { border-color: var(--bid); box-shadow: 0 4px 20px rgba(26,60,94,.08); transform: translateY(-2px); }
+.how-card.featured { border-color: var(--gold); background: linear-gradient(135deg,#fffdf5,white); }
+.how-icon { font-size: 26px; margin-bottom: 14px; }
+.how-card h3 { font-size: 15px; font-weight: 500; margin-bottom: 8px; line-height: 1.35; }
+.how-card p { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+.how-cta { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: var(--bid); border: 1px solid var(--bid); padding: 8px 14px; border-radius: 7px; background: none; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s; }
+.how-cta:hover { background: var(--bid); color: white; }
+.how-cta-gold { background: var(--gold); color: var(--bid); border: none; padding: 8px 14px; border-radius: 7px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: filter .15s; }
+.how-cta-gold:hover { filter: brightness(1.06); }
+.tag-green { font-size: 11px; background: #f0fdf4; color: #16a34a; padding: 3px 9px; border-radius: 10px; font-weight: 500; }
+
+.trust-strip { background: white; padding: 48px 40px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.trust-inner { max-width: 960px; margin: 0 auto; }
+.trust-h { font-size: 13px; font-weight: 500; color: var(--muted); text-align: center; margin-bottom: 28px; letter-spacing: .03em; }
+.trust-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+.trust-item { text-align: center; padding: 18px; }
+.trust-icon { font-size: 26px; margin-bottom: 10px; }
+.trust-item h4 { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+.trust-item p { font-size: 12px; color: var(--muted); line-height: 1.55; }
+.trust-proto { font-size: 11px; color: var(--teal); font-family: 'DM Mono', monospace; background: rgba(0,201,167,.08); padding: 2px 8px; border-radius: 10px; display: inline-block; margin-top: 5px; }
+
+.projects-bg { background: var(--bid); padding: 64px 40px; }
+.projects-inner { max-width: 960px; margin: 0 auto; }
+.projects-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 26px; }
+.projects-h { font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; color: white; }
+.projects-sub { font-size: 13px; color: rgba(255,255,255,.5); margin-top: 5px; }
+.projects-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+.proj-card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; padding: 22px; cursor: pointer; transition: all .2s; }
+.proj-card:hover { background: rgba(255,255,255,.1); border-color: rgba(200,169,81,.4); }
+.proj-tag { font-size: 10px; font-weight: 500; color: var(--gold); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+.proj-tag::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+.proj-card h4 { font-size: 14px; font-weight: 500; color: white; margin-bottom: 5px; }
+.proj-sector { font-size: 12px; color: rgba(255,255,255,.45); margin-bottom: 14px; }
+.proj-metric { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+.proj-mkey { font-size: 11px; color: rgba(255,255,255,.4); }
+.proj-mval { font-size: 13px; font-weight: 500; color: rgba(255,255,255,.85); }
+.proj-footer { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.08); }
+.proj-status { font-size: 11px; color: rgba(255,255,255,.35); font-style: italic; margin-bottom: 8px; }
+.proj-unlock { width: 100%; background: rgba(200,169,81,.15); border: 1px solid rgba(200,169,81,.3); color: var(--gold); border-radius: 7px; padding: 8px; font-size: 12px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s; }
+.proj-unlock:hover { background: rgba(200,169,81,.25); }
+
+footer { background: var(--navy); padding: 26px 40px; display: flex; align-items: center; justify-content: space-between; }
+.footer-copy { font-size: 12px; color: rgba(255,255,255,.35); }
+.footer-pw { display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgba(255,255,255,.35); }
+.footer-pw img { height: 18px; opacity: .45; }
+.footer-pw a { color: rgba(255,255,255,.4); text-decoration: none; }
+
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+.overlay.open { display: flex; }
+.modal { background: white; border-radius: 14px; width: 480px; max-width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.18); overflow: hidden; max-height: 90vh; overflow-y: auto; }
+.modal-top { padding: 24px 28px 18px; }
+.modal-top h3 { font-family: 'DM Serif Display', serif; font-size: 22px; font-weight: 400; margin-bottom: 6px; color: white; }
+.modal-top p { font-size: 13px; color: rgba(255,255,255,.65); line-height: 1.5; }
+.modal-body { padding: 20px 28px 28px; }
+.close-row { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+.close-btn { background: none; border: none; font-size: 13px; color: var(--muted); cursor: pointer; padding: 4px 6px; border-radius: 5px; }
+.close-btn:hover { background: var(--bg); }
+.field { margin-bottom: 13px; }
+.field label { display: block; font-size: 12px; font-weight: 500; color: #374151; margin-bottom: 5px; }
+.field input, .field select { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); transition: border .15s; }
+.field input:focus, .field select:focus { outline: none; border-color: var(--bid); box-shadow: 0 0 0 3px rgba(26,60,94,.1); }
+.opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.opt-btn { border: 1.5px solid var(--border); border-radius: 9px; padding: 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; background: white; color: #374151; text-align: left; transition: all .15s; line-height: 1.4; }
+.opt-btn:hover { border-color: var(--bid); color: var(--bid); background: rgba(26,60,94,.03); }
+.opt-btn.selected { border-color: var(--bid); background: rgba(26,60,94,.06); color: var(--bid); font-weight: 500; }
+.opt-icon { font-size: 18px; display: block; margin-bottom: 5px; }
+.est-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 14px; display: none; }
+.est-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.est-val { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--bid); }
+.est-note { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.submit-btn { width: 100%; padding: 12px; border-radius: 9px; border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 4px; transition: filter .15s; }
+.submit-btn:hover { filter: brightness(1.06); }
+.form-note { font-size: 11px; color: var(--muted); margin-top: 9px; text-align: center; }
+
+@media (max-width: 720px) {
+  .hero-inner, .how-grid, .trust-grid, .projects-grid { grid-template-columns: 1fr; }
+  .hero { padding: 48px 20px 56px; }
+  .hero h1 { font-size: 30px; }
+  section, .trust-strip, .projects-bg { padding: 48px 20px; }
+  nav { padding: 0 16px; }
+  .nav-link { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div style="display:flex;align-items:center;">
+    <span class="nav-bid">Fleet Street Quarter</span>
+    <div class="nav-sep"></div>
+    <span class="nav-sub">Local Carbon Market</span>
+  </div>
+  <div class="nav-right">
+    <span class="nav-link" onclick="openM('funder')">Fund a project</span>
+    <span class="nav-link" onclick="openM('host')">Value your upgrade</span>
+    <button class="nav-cta" onclick="openM('funder')">Get started</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">EC4 &middot; London &middot; Hyper-local</div>
+      <h1>Connecting businesses<br>with local value &mdash;<br><em>social, green, verified</em></h1>
+      <p class="hero-sub">Fleet Street Quarter organisations can fund green upgrades in local buildings — generating verified carbon reductions right here in EC4 and real social value for your area.</p>
+      <div class="hero-btns">
+        <button class="btn-gold" onclick="openM('funder')">Fund local value &rarr;</button>
+        <button class="btn-ghost" onclick="openM('host')">See what your project is worth</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hs-title">Fleet Street Quarter &mdash; live pipeline</div>
+      <div class="hs-row">
+        <span class="hs-label">Organisations registered</span>
+        <span class="hs-val">5<span class="hs-unit"> orgs</span></span>
+      </div>
+      <div class="hs-row">
+        <span class="hs-label">Carbon in pipeline</span>
+        <span class="hs-val">~34<span class="hs-unit"> tCO&sup2;e/yr</span></span>
+      </div>
+      <div class="hs-row">
+        <span class="hs-label">Projects ready to fund</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="hs-val">3</span>
+          <span class="hs-badge">open now</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section style="background:var(--bg);">
+  <div class="section-inner">
+    <div class="eyebrow">How it works</div>
+    <div class="section-h">A hyper-local marketplace<br>for green investment</div>
+    <p class="section-sub">Whether you want to fund local impact, get help funding your own upgrade, get started today.</p>
+    <div class="how-grid">
+      <div class="how-card" onclick="openM('funder')">
+        <div class="how-icon">🏢</div>
+        <h3>Fund local projects and meet your sustainability goals</h3>
+        <p>Back verified green upgrades in local buildings. Get real, auditable carbon reductions in EC4 — and satisfy PPN 002 social value requirements with automated proof.</p>
+        <button class="how-cta" onclick="openM('funder')">Find local value to fund &rarr;</button>
+      </div>
+      <div class="how-card featured" onclick="openM('host')">
+        <div class="how-icon">&#9889;</div>
+        <h3>See what your green upgrade is worth</h3>
+        <p>Installing LEDs, solar, or a heat pump? A local funder can help cover part of your project cost. You keep the energy savings &mdash; they get verified carbon certificates.</p>
+        <button class="how-cta-gold" onclick="openM('host')">Calculate your project's value &rarr;</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="trust-strip">
+  <div class="trust-inner">
+    <div class="trust-h">How we verify every project</div>
+    <div class="trust-grid">
+      <div class="trust-item">
+        <div class="trust-icon">&#128225;</div>
+        <h4>Real-time metered data</h4>
+        <p>Energy generation and consumption is metered at source and recorded hourly &mdash; not estimated or modelled after the fact.</p>
+        <span class="trust-proto">IPMVP Option A/B</span>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">&#128220;</div>
+        <h4>Automated certificates</h4>
+        <p>Each kilowatt-hour is backed by an Energy Attribute Certificate (EAC) &mdash; a tradeable proof of clean energy that cannot be claimed twice.</p>
+        <span class="trust-proto">GHG Protocol Scope 2</span>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">&#128202;</div>
+        <h4>Audit-ready reports</h4>
+        <p>Quarterly ISO 14064 compliant carbon statements and PPN 002 progress reports are generated automatically.</p>
+        <span class="trust-proto">ISO 14064 aligned</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="projects-bg">
+  <div class="projects-inner">
+    <div class="projects-head">
+      <div>
+        <div class="projects-h">Projects in your area</div>
+        <div class="projects-sub">EC4 &middot; Fleet Street Quarter &middot; Anonymised pipeline &mdash; register to see full details</div>
+      </div>
+      <button class="btn-ghost" style="font-size:12px;padding:8px 16px;" onclick="openM('funder')">Register to see all &rarr;</button>
+    </div>
+    <div class="projects-grid">
+      <div class="proj-card" onclick="openM('funder')">
+        <div class="proj-tag">LED lighting</div>
+        <h4>Heritage building &middot; EC4A</h4>
+        <div class="proj-sector">Cultural / arts venue</div>
+        <div class="proj-metric"><span class="proj-mkey">Carbon avoided</span><span class="proj-mval">~8 tCO&sup2;e/yr</span></div>
+        <div class="proj-metric"><span class="proj-mkey">Energy saving</span><span class="proj-mval">~28,000 kWh/yr</span></div>
+        <div class="proj-metric"><span class="proj-mkey">Funding needed</span><span class="proj-mval">&pound;4,000&ndash;6,000</span></div>
+        <div class="proj-footer">
+          <div class="proj-status">Awaiting installer spec &middot; open for funders</div>
+          <button class="proj-unlock">Register to see full details &rarr;</button>
+        </div>
+      </div>
+      <div class="proj-card" onclick="openM('funder')">
+        <div class="proj-tag">LED lighting</div>
+        <h4>Food &amp; hospitality &middot; EC4Y</h4>
+        <div class="proj-sector">Bar / restaurant</div>
+        <div class="proj-metric"><span class="proj-mkey">Carbon avoided</span><span class="proj-mval">~12 tCO&sup2;e/yr</span></div>
+        <div class="proj-metric"><span class="proj-mkey">Energy saving</span><span class="proj-mval">~42,000 kWh/yr</span></div>
+        <div class="proj-metric"><span class="proj-mkey">Funding needed</span><span class="proj-mval">&pound;6,000&ndash;9,000</span></div>
+        <div class="proj-footer">
+          <div class="proj-status">Spec confirmed &middot; seeking funder</div>
+          <button class="proj-unlock">Register to see full details &rarr;</button>
+        </div>
+      </div>
+      <div class="proj-card" onclick="openM('funder')">
+        <div class="proj-tag">LED lighting</div>
+        <h4>Food &amp; hospitality &middot; EC4M</h4>
+        <div class="proj-sector">Bar / restaurant</div>
+        <div class="proj-metric"><span class="proj-mkey">Carbon avoided</span><span class="proj-mval">~14 tCO&sup2;e/yr</span></div>
+        <div class="proj-metric"><span class="proj-mkey">Energy saving</span><span class="proj-mval">~48,000 kWh/yr</span></div>
+        <div class="proj-metric"><span class="proj-mkey">Funding needed</span><span class="proj-mval">&pound;7,000&ndash;10,000</span></div>
+        <div class="proj-footer">
+          <div class="proj-status">Spec confirmed &middot; seeking funder</div>
+          <button class="proj-unlock">Register to see full details &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-copy">&copy; 2026 Fleet Street Quarter Local Carbon Market</div>
+  <div class="footer-pw">
+    <img src="PeerCo_Logo.svg" alt="PeerCo">
+    <span>Powered by <a href="https://peerco.ai">PeerCo</a></span>
+  </div>
+</footer>
+
+<!-- FUNDER MODAL -->
+<div class="overlay" id="m-funder">
+  <div class="modal">
+    <div class="modal-top" style="background:var(--bid);">
+      <h3>Find local value to fund</h3>
+      <p>Tell us about your situation and we'll match you with suitable projects in EC4.</p>
+    </div>
+    <div class="modal-body">
+      <div class="close-row"><button class="close-btn" onclick="closeM('funder')">&#10005; Close</button></div>
+      <p style="font-size:13px;font-weight:500;color:#374151;margin-bottom:10px;">What best describes your situation?</p>
+      <div class="opt-grid">
+        <button class="opt-btn" onclick="selOpt(this)"><span class="opt-icon">&#9851;</span>I buy carbon offsets and want a local alternative</button>
+        <button class="opt-btn" onclick="selOpt(this)"><span class="opt-icon">&#128203;</span>I need to meet PPN 002 social value requirements</button>
+        <button class="opt-btn" onclick="selOpt(this)"><span class="opt-icon">&#127919;</span>Both &mdash; offsets and PPN 002</button>
+        <button class="opt-btn" onclick="selOpt(this)"><span class="opt-icon">&#128172;</span>Something else &mdash; I'd like to find out more</button>
+      </div>
+      <div class="field"><label>Your name</label><input type="text" placeholder="Full name"></div>
+      <div class="field"><label>Organisation</label><input type="text" placeholder="Company name"></div>
+      <div class="field"><label>Work email</label><input type="email" placeholder="you@organisation.com"></div>
+      <button class="submit-btn" style="background:var(--bid);color:white;">Register interest &rarr;</button>
+      <p class="form-note">A member of the PeerCo team will be in touch within 2 working days.</p>
+    </div>
+  </div>
+</div>
+
+<!-- HOST MODAL -->
+<div class="overlay" id="m-host">
+  <div class="modal">
+    <div class="modal-top" style="background:var(--bid);">
+      <h3>See what your green upgrade is worth</h3>
+      <p>By installing green technology, you can sell the environmental value to a local funder &mdash; helping cover part of your project cost. You keep the energy savings.</p>
+    </div>
+    <div class="modal-body">
+      <div class="close-row"><button class="close-btn" onclick="closeM('host')">&#10005; Close</button></div>
+      <div class="field">
+        <label>What are you planning to install?</label>
+        <select onchange="updateEst(this.value)">
+          <option value="">Select technology&hellip;</option>
+          <option value="led">LED lighting upgrade</option>
+          <option value="solar">Solar PV</option>
+          <option value="hvac">Heat pump / HVAC</option>
+        </select>
+      </div>
+      <div class="est-box" id="est-box">
+        <div class="est-label">Indicative annual EAC income (your share)</div>
+        <div class="est-val" id="est-val">&mdash;</div>
+        <div class="est-note">Rough estimate only. An installer quote gives you the precise figure.</div>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Want a more detailed estimate first? <a href="peerco_calculator.html" target="_blank" style="color:var(--bid);font-weight:500;">Try our full calculator &rarr;</a></p>
+      <div class="field"><label>Your name</label><input type="text" placeholder="Full name"></div>
+      <div class="field"><label>Organisation or building name</label><input type="text" placeholder="e.g. St Bride's Foundation"></div>
+      <div class="field"><label>Email</label><input type="email" placeholder="you@yourbusiness.com"></div>
+      <div class="field">
+        <label>When are you planning this project?</label>
+        <select><option value="">Select&hellip;</option><option>Within 3 months</option><option>3&ndash;6 months</option><option>6&ndash;12 months</option><option>Not sure yet</option></select>
+      </div>
+      <button class="submit-btn" style="background:var(--gold);color:var(--bid);">Register my project &rarr;</button>
+      <p class="form-note">No commitment &mdash; we'll follow up to explain the next steps.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function openM(id) { document.getElementById('m-'+id).classList.add('open'); }
+function closeM(id) { document.getElementById('m-'+id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); }));
+function selOpt(btn) { btn.closest('.opt-grid').querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); }
+function updateEst(v) {
+  const map = { led:'&pound;800 &ndash; &pound;2,400/yr', solar:'&pound;1,200 &ndash; &pound;4,800/yr', hvac:'&pound;900 &ndash; &pound;2,800/yr' };
+  const box = document.getElementById('est-box');
+  const val = document.getElementById('est-val');
+  if(v && map[v]) { val.innerHTML = map[v]; box.style.display='block'; } else { box.style.display='none'; }
+}
+</script>
+</body>
+</html>
