@@ -280,6 +280,7 @@ tr:hover .row-actions { opacity: 1; }
       </div>
       <div class="topbar-actions">
         <button class="btn btn-outline btn-sm">Discard</button>
+        <a href="fsq_preview.html" target="_blank"><button class="btn btn-teal btn-sm" style="color:white;">&#9654; Preview public page</button></a>
         <button class="btn btn-primary btn-sm" onclick="saveConfig()">Save changes</button>
       </div>
     </div>
@@ -549,7 +550,7 @@ tr:hover .row-actions { opacity: 1; }
         <label>Channel partner (optional)</label>
         <select id="org-partner">
           <option value="">— None / direct —</option>
-          <option value="bipin">Bipin Energy Solutions</option>
+          <option value="bipin">Work Work Limited</option>
         </select>
         <span class="field-hint">Leave blank if this project host came to PeerCo directly</span>
       </div>
@@ -575,7 +576,7 @@ tr:hover .row-actions { opacity: 1; }
     <div class="modal-body">
       <div class="field">
         <label>Company name</label>
-        <input type="text" id="cp-name" placeholder="e.g. Bipin Energy Solutions">
+        <input type="text" id="cp-name" placeholder="e.g. Work Work Limited">
       </div>
       <div class="field">
         <label>Contact name</label>
@@ -660,12 +661,12 @@ let orgs = [
   { id: 1, name: 'Freshfields Bruckhaus Deringer', type: 'funder', contact: 'Sarah Chen', email: 'schen@freshfields.com', partner: null, status: 'active', added: '12 Apr 2026', notes: '' },
   { id: 2, name: 'News UK', type: 'funder', contact: 'James Okafor', email: 'jokafor@news.co.uk', partner: null, status: 'active', added: '14 Apr 2026', notes: '' },
   { id: 3, name: "St Bride's Foundation", type: 'host', contact: 'Maria Lopez', email: 'mlopez@stbrides.com', partner: null, status: 'pending', added: '28 Apr 2026', notes: 'LED dimmer strip upgrade — awaiting installer spec' },
-  { id: 4, name: 'El Vino Wine Bar', type: 'host', contact: 'Tom Bell', email: 'tom@elvino.co.uk', partner: 'Bipin Energy Solutions', status: 'active', added: '2 May 2026', notes: '' },
-  { id: 5, name: 'Punch Tavern', type: 'host', contact: 'Alice Grant', email: 'alice@punchtavern.com', partner: 'Bipin Energy Solutions', status: 'active', added: '3 May 2026', notes: '' },
+  { id: 4, name: 'El Vino Wine Bar', type: 'host', contact: 'Tom Bell', email: 'tom@elvino.co.uk', partner: 'Work Work Limited', status: 'active', added: '2 May 2026', notes: '' },
+  { id: 5, name: 'Punch Tavern', type: 'host', contact: 'Alice Grant', email: 'alice@punchtavern.com', partner: 'Work Work Limited', status: 'active', added: '3 May 2026', notes: '' },
 ];
 
 let partners = [
-  { id: 1, name: 'Bipin Energy Solutions', contact: 'Bipin Patel', email: 'bipin@bipinenergy.co.uk', specialism: 'LED lighting', status: 'active', added: '1 Apr 2026', notes: '' },
+  { id: 1, name: 'Work Work Limited', contact: 'Bipin Jha', email: 'bipin@workworkltd.com', specialism: 'LED lighting', status: 'active', added: '1 Apr 2026', notes: '' },
 ];
 
 let linkingOrgId = null;
