@@ -327,7 +327,7 @@ footer {
       <div class="how-card" style="border-color: rgba(0,201,167,0.2); background: linear-gradient(135deg, rgba(0,201,167,0.03) 0%, var(--white) 100%);" onclick="openM('host')">
         <div class="card-who"><span class="card-who-dot" style="background:var(--teal);"></span>For SMEs &amp; local organisations</div>
         <h3>List your project and connect with a local funder</h3>
-        <p>SMEs that want to deliver projects but need funding to progress: list your energy-saving retrofits or green upgrades and connect with leading corporate neighbours ready to fund your transition.</p>
+        <p>SMEs that want to deliver projects but need funding to progress: list your energy-saving retrofits or green upgrades and connect with leading corporate neighbours ready to fund your transition (by buying carbon credits from you).</p>
         <button class="card-btn card-btn-teal">Get Carbon Funding &rarr;</button>
       </div>
 
@@ -357,7 +357,7 @@ footer {
         <div class="trust-icon">&#128202;</div>
         <h4>Audit-ready reports</h4>
         <p>Quarterly ISO 14064 compliant carbon statements and PPN 002 progress reports are generated automatically.</p>
-        <span class="trust-badge">ISO 14064</span>
+        <span class="trust-badge">ISO 14064 GHG Management & Reporting</span>
       </div>
     </div>
   </div>
@@ -442,16 +442,17 @@ footer {
         </div>
         <input type="hidden" name="estimated_income" id="est-hidden">
         <div class="field"><label>Your name *</label><input type="text" name="name" placeholder="Full name" required></div>
-        <div class="field"><label>Organisation or building name *</label><input type="text" name="organisation" placeholder="e.g. St Bride&rsquo;s Foundation" required></div>
+        <div class="field"><label>Organisation or building name *</label><input type="text" name="organisation" placeholder="Company A" required></div>
         <div class="field"><label>Email *</label><input type="email" name="email" placeholder="you@yourbusiness.com" required></div>
         <div class="field">
           <label>When are you planning this?</label>
-          <select name="timing">
+         <select name="timing">
             <option value="">Select&hellip;</option>
-            <option>Within 3 months</option>
-            <option>3&ndash;6 months</option>
-            <option>6&ndash;12 months</option>
-            <option>Not sure yet</option>
+            <option>1. Concept stage</option>
+            <option>2. Initial feasibility delivered</option>
+            <option>3. Detailed design</option>
+            <option>4. Tendering / Finance</option>
+            <option>5. Ready to go</option>
           </select>
         </div>
         <div class="field"><label>Anything else?</label><textarea name="message" placeholder="Optional &mdash; project size, building type, any constraints&hellip;"></textarea></div>
