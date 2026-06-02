@@ -419,8 +419,7 @@ footer {
     </div>
     <div class="modal-body">
       <div class="close-row"><button class="close-btn" onclick="closeM('host')">&#10005; Close</button></div>
-      <!-- Replace YOUR_FORM_ID with your Formspree form ID -->
-      <form id="host-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" onsubmit="handleSubmit(event,'host')">
+      <form id="host-form" action="https://formspree.io/f/mbdbqnyk" method="POST" onsubmit="handleSubmit(event,'host')">
         <input type="hidden" name="form_type" value="Get Carbon Funding — Fleet Street Quarter">
         <div class="field">
           <label>What are you planning to install? *</label>
@@ -487,7 +486,7 @@ function updateEst(v) {
 }
 function handleSubmit(e, formId) {
   const form = e.target;
-  if(form.action.includes('YOUR_FORM_ID')) {
+  if(form.action.includes('mbdbqnyk')) {
     e.preventDefault();
     alert('Form not yet connected — add your Formspree ID to activate submissions.');
     return;
