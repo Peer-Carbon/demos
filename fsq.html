@@ -486,11 +486,6 @@ function updateEst(v) {
 }
 function handleSubmit(e, formId) {
   const form = e.target;
-  if(form.action.includes('mbdbqnyk')) {
-    e.preventDefault();
-    alert('Form not yet connected — add your Formspree ID to activate submissions.');
-    return;
-  }
   e.preventDefault();
   fetch(form.action, { method:'POST', body: new FormData(form), headers:{ 'Accept':'application/json' } })
     .then(r => {
