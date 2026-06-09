@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PeerCo — Join the Hyperlocal Marketplace</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --navy:       #0d2d6b;
+      --navy-mid:   #1a3f8f;
+      --teal:       #0bbfb0;
+      --teal-dark:  #0a9e91;
+      --green:      #2ecc8a;
+      --bg:         #f8fafc;
+      --white:      #ffffff;
+      --text:       #1e293b;
+      --muted:      #64748b;
+      --border:     #e2e8f0;
+      --card-bg:    #f1f5f9;
+      --radius:     0.75rem;
+      --font:       ui-sans-serif, system-ui, sans-serif;
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+    .nav-logo img { height: 28px; }
+    .nav-logo span {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .nav-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--teal-dark);
+      background: #e6faf8;
+      border: 1px solid #b2ede8;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 2rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--teal-dark);
+      background: #e6faf8;
+      border: 1px solid #b2ede8;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      line-height: 1.15;
+      color: var(--navy);
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--teal);
+    }
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 580px;
+      margin: 0 auto 2.5rem;
+    }
+    .hero .question {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1.5rem;
+    }
+
+    /* TYPE GRID */
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 2rem 5rem;
+    }
+    @media (max-width: 520px) {
+      .type-grid { grid-template-columns: 1fr; }
+    }
+
+    .type-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.25rem;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.18s, box-shadow 0.18s, transform 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .type-card:hover {
+      border-color: var(--teal);
+      box-shadow: 0 4px 20px rgba(11,191,176,0.12);
+      transform: translateY(-2px);
+    }
+    .type-card .icon { font-size: 1.6rem; margin-bottom: 0.2rem; }
+    .type-card .label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .type-card .desc {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: var(--white);
+    }
+    footer a { color: var(--muted); }
+
+    /* OVERLAY */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(13,45,107,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .overlay.active { display: flex; }
+
+    /* POPUP */
+    .popup {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(13,45,107,0.15);
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 2rem;
+      position: relative;
+    }
+    .popup-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--card-bg);
+      border: none;
+      color: var(--muted);
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 4px 9px;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .popup-close:hover { background: var(--border); color: var(--navy); }
+
+    .popup h2 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+      padding-right: 2rem;
+      line-height: 1.3;
+    }
+    .popup-sub {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 1.25rem;
+    }
+    .bullets {
+      list-style: none;
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .bullets li {
+      font-size: 0.87rem;
+      color: var(--text);
+      padding-left: 1.25rem;
+      position: relative;
+      line-height: 1.5;
+    }
+    .bullets li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--teal-dark);
+      font-size: 0.8rem;
+    }
+
+    /* FORM */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 0.875rem;
+    }
+    .form-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: var(--font);
+      padding: 0.6rem 0.875rem;
+      width: 100%;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(11,191,176,0.1);
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: #94a3b8; }
+    .form-group textarea { resize: vertical; min-height: 72px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .postcode-note {
+      font-size: 0.73rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* BUTTONS */
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: var(--teal);
+      color: var(--white);
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.15s;
+      margin-bottom: 0.75rem;
+    }
+    .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); }
+
+    .btn-secondary {
+      display: block;
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: transparent;
+      color: var(--teal-dark);
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: 1.5px solid var(--teal);
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.15s;
+      margin-bottom: 0.75rem;
+    }
+    .btn-secondary:hover { background: #e6faf8; }
+
+    .form-note {
+      font-size: 0.74rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0.875rem 0;
+      color: var(--muted);
+      font-size: 0.74rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* SUCCESS */
+    .success-state {
+      display: none;
+      text-align: center;
+      padding: 2rem 0 1rem;
+    }
+    .success-state .success-icon { font-size: 2.25rem; margin-bottom: 0.75rem; }
+    .success-state h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+    .success-state p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .cbi-note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="https://peerco.ai">
+    <img src="https://storage.googleapis.com/peerco-static-demos/explore/logo.svg" alt="PeerCo" />
+    <span>PeerCo</span>
+  </a>
+  <span class="nav-tag">UK</span>
+</nav>
+
+<section class="hero">
+  <span class="hero-eyebrow">Hyperlocal Carbon Markets</span>
+  <h1>Join the marketplace <em>transforming</em> our cities</h1>
+  <p>We're PeerCo. We create city-scale energy attribute markets that incentivise the installation of proven electric technologies — in communities that need them most.</p>
+  <p class="question">Who are you?</p>
+</section>
+
+<div class="type-grid">
+  <button class="type-card" onclick="openPopup('resident')">
+    <div class="icon">🏘️</div>
+    <div class="label">Resident</div>
+    <div class="desc">You live in the community and want to benefit from the clean energy transition.</div>
+  </button>
+  <button class="type-card" onclick="openPopup('sme')">
+    <div class="icon">🏪</div>
+    <div class="label">SME</div>
+    <div class="desc">You run a small business and want to lower bills and access carbon funding.</div>
+  </button>
+  <button class="type-card" onclick="openPopup('provider')">
+    <div class="icon">⚡</div>
+    <div class="label">Service Provider</div>
+    <div class="desc">You install or supply clean energy technology and want to reach more customers.</div>
+  </button>
+  <button class="type-card" onclick="openPopup('buyer')">
+    <div class="icon">🏢</div>
+    <div class="label">Carbon Credit Buyer</div>
+    <div class="desc">You're a large business or organisation looking to fund local impact and meet sustainability goals.</div>
+  </button>
+</div>
+
+<!-- RESIDENT POPUP -->
+<div class="overlay" id="overlay-resident" onclick="closeOnOverlay(event,'resident')">
+  <div class="popup">
+    <button class="popup-close" onclick="closePopup('resident')">✕</button>
+    <h2>Get ahead of the transition</h2>
+    <p class="popup-sub">PeerCo is building community energy markets that will bring the benefits of clean technology to residents — not just large businesses. Register now and we'll let you know when there's an opportunity in your area.</p>
+    <div id="resident-form">
+      <div class="form-group">
+        <label>Your name</label>
+        <input type="text" placeholder="Name" id="resident-name" />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="your@email.com" id="resident-email" />
+      </div>
+      <div class="form-group">
+        <label>Your postcode</label>
+        <input type="text" placeholder="e.g. EC4A 2AB" id="resident-postcode" />
+        <span class="postcode-note">We're community-focused — your postcode helps us match you with local opportunities.</span>
+      </div>
+      <div class="form-group">
+        <label>Anything else?</label>
+        <textarea placeholder="Optional — tell us a bit about your situation" id="resident-notes"></textarea>
+      </div>
+      <button class="btn-primary" onclick="submitForm('resident')">Register interest →</button>
+      <div class="divider">or</div>
+      <a class="btn-secondary" href="https://calendly.com/elaine-id4/" target="_blank">Book a 20-minute call</a>
+      <p class="form-note">We'll be in touch within 2 working days.</p>
+    </div>
+    <div class="success-state" id="resident-success">
+      <div class="success-icon">🌿</div>
+      <h3>You're registered</h3>
+      <p>We'll be in touch when there's an opportunity in your area. Thank you for being part of the transition.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SME POPUP -->
+<div class="overlay" id="overlay-sme" onclick="closeOnOverlay(event,'sme')">
+  <div class="popup">
+    <button class="popup-close" onclick="closePopup('sme')">✕</button>
+    <h2>Turn your energy upgrades into cash flow</h2>
+    <p class="popup-sub">22,000 small businesses are already profiting from the clean energy economy, according to CBI, and every £1 invested generates £1.85 in returns for the local economy. Get your share:</p>
+    <ul class="bullets">
+      <li>Lower bills through energy upgrades</li>
+      <li>Cash from carbon sales to local businesses</li>
+      <li>Interest-free financing to start today</li>
+    </ul>
+    <div id="sme-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your name</label>
+          <input type="text" placeholder="Name" id="sme-name" />
+        </div>
+        <div class="form-group">
+          <label>Business name</label>
+          <input type="text" placeholder="Business" id="sme-org" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Work email</label>
+        <input type="email" placeholder="your@business.com" id="sme-email" />
+      </div>
+      <div class="form-group">
+        <label>Your postcode</label>
+        <input type="text" placeholder="e.g. EC4A 2AB" id="sme-postcode" />
+        <span class="postcode-note">We're community-focused — your postcode helps us match you with local opportunities.</span>
+      </div>
+      <div class="form-group">
+        <label>What are you most interested in?</label>
+        <select id="sme-interest">
+          <option value="" disabled selected>Select…</option>
+          <option>Lower energy bills</option>
+          <option>Carbon funding</option>
+          <option>Interest-free financing</option>
+          <option>Not sure yet — tell me more</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Anything else?</label>
+        <textarea placeholder="Optional" id="sme-notes"></textarea>
+      </div>
+      <button class="btn-primary" onclick="submitForm('sme')">Register my business →</button>
+      <div class="divider">or</div>
+      <a class="btn-secondary" href="https://calendly.com/elaine-id4/" target="_blank">Book a 20-minute call with us</a>
+      <p class="form-note">No commitment — we'll follow up to explain next steps.</p>
+    </div>
+    <div class="success-state" id="sme-success">
+      <div class="success-icon">🌿</div>
+      <h3>Project registered</h3>
+      <p>We'll be in touch within 2 working days to discuss your business and next steps.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICE PROVIDER POPUP -->
+<div class="overlay" id="overlay-provider" onclick="closeOnOverlay(event,'provider')">
+  <div class="popup">
+    <button class="popup-close" onclick="closePopup('provider')">✕</button>
+    <h2>Partner with PeerCo</h2>
+    <p class="popup-sub">We're building the marketplace that connects clean energy service providers and installers with communities that need you. Get in touch to explore how we can work together.</p>
+    <div id="provider-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your name</label>
+          <input type="text" placeholder="Name" id="provider-name" />
+        </div>
+        <div class="form-group">
+          <label>Organisation</label>
+          <input type="text" placeholder="Company" id="provider-org" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Work email</label>
+        <input type="email" placeholder="your@company.com" id="provider-email" />
+      </div>
+      <div class="form-group">
+        <label>Your postcode</label>
+        <input type="text" placeholder="e.g. EC4A 2AB" id="provider-postcode" />
+        <span class="postcode-note">We're community-focused — your postcode helps us understand where you operate.</span>
+      </div>
+      <div class="form-group">
+        <label>What do you install or supply?</label>
+        <select id="provider-tech">
+          <option value="" disabled selected>Select…</option>
+          <option>Solar PV</option>
+          <option>Battery storage</option>
+          <option>LED lighting</option>
+          <option>Heat pumps</option>
+          <option>EV charging</option>
+          <option>Energy management software</option>
+          <option>Aggregator services</option>
+          <option>Multiple technologies</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Anything else?</label>
+        <textarea placeholder="Tell us about your business and what you're looking for" id="provider-notes"></textarea>
+      </div>
+      <button class="btn-primary" onclick="submitForm('provider')">Get in touch →</button>
+      <div class="divider">or</div>
+      <a class="btn-secondary" href="https://calendly.com/elaine-id4/" target="_blank">Book a 20-minute call with us</a>
+      <p class="form-note">We'll be in touch within 2 working days.</p>
+    </div>
+    <div class="success-state" id="provider-success">
+      <div class="success-icon">⚡</div>
+      <h3>Thanks for getting in touch</h3>
+      <p>We'll be in touch within 2 working days to explore how we can work together.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BUYER POPUP -->
+<div class="overlay" id="overlay-buyer" onclick="closeOnOverlay(event,'buyer')">
+  <div class="popup">
+    <button class="popup-close" onclick="closePopup('buyer')">✕</button>
+    <h2>Fund local projects and meet your sustainability goals</h2>
+    <p class="popup-sub">Browse verified SME carbon reduction projects across your local area to lower your footprint and invest in your community.</p>
+    <ul class="bullets">
+      <li>Verified, real-time metered carbon certificates — not estimated</li>
+      <li>Meets PPN 002 social value procurement requirements</li>
+      <li>Hyper-local impact you can name and evidence</li>
+    </ul>
+    <div id="buyer-form">
+      <div class="form-group">
+        <label>What best describes your situation?</label>
+        <select id="buyer-type">
+          <option value="" disabled selected>Select…</option>
+          <option>I buy carbon offsets and want a local alternative</option>
+          <option>I need to meet PPN 002 social value requirements</option>
+          <option>Both — offsets and PPN 002</option>
+          <option>Something else — I'd like to find out more</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your name</label>
+          <input type="text" placeholder="Name" id="buyer-name" />
+        </div>
+        <div class="form-group">
+          <label>Organisation</label>
+          <input type="text" placeholder="Organisation" id="buyer-org" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Work email</label>
+        <input type="email" placeholder="your@org.com" id="buyer-email" />
+      </div>
+      <div class="form-group">
+        <label>Your postcode</label>
+        <input type="text" placeholder="e.g. EC4A 2AB" id="buyer-postcode" />
+        <span class="postcode-note">We're community-focused — your postcode helps us match you with local projects.</span>
+      </div>
+      <div class="form-group">
+        <label>Anything else?</label>
+        <textarea placeholder="Optional" id="buyer-notes"></textarea>
+      </div>
+      <button class="btn-primary" onclick="submitForm('buyer')">Register interest →</button>
+      <div class="divider">or</div>
+      <a class="btn-secondary" href="https://calendly.com/elaine-id4/" target="_blank">Book a 20-minute call with us</a>
+      <p class="form-note">A member of the PeerCo team will be in touch within 2 working days.</p>
+    </div>
+    <div class="success-state" id="buyer-success">
+      <div class="success-icon">✓</div>
+      <h3>Thank you — we'll be in touch</h3>
+      <p>Someone from the PeerCo team will contact you within 2 working days to discuss suitable projects in your area.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2026 Peer Carbon Ltd · <a href="https://peerco.ai/privacy-policy">Privacy Policy</a>
+</footer>
+
+<script>
+  // TODO: Replace these Formspree endpoint IDs before deploying
+  const ENDPOINTS = {
+    resident: 'https://formspree.io/f/REPLACE_RESIDENT',
+    sme:      'https://formspree.io/f/REPLACE_SME',
+    provider: 'https://formspree.io/f/REPLACE_PROVIDER',
+    buyer:    'https://formspree.io/f/REPLACE_BUYER'
+  };
+
+  function openPopup(type) {
+    document.getElementById('overlay-' + type).classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePopup(type) {
+    document.getElementById('overlay-' + type).classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  function closeOnOverlay(e, type) {
+    if (e.target === document.getElementById('overlay-' + type)) closePopup(type);
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') ['resident','sme','provider','buyer'].forEach(closePopup);
+  });
+
+  async function submitForm(type) {
+    const g = id => document.getElementById(id)?.value || '';
+    let data = { _type: type };
+    if (type === 'resident') {
+      data = { ...data, name: g('resident-name'), email: g('resident-email'), postcode: g('resident-postcode'), notes: g('resident-notes') };
+    } else if (type === 'sme') {
+      data = { ...data, name: g('sme-name'), org: g('sme-org'), email: g('sme-email'), postcode: g('sme-postcode'), interest: g('sme-interest'), notes: g('sme-notes') };
+    } else if (type === 'provider') {
+      data = { ...data, name: g('provider-name'), org: g('provider-org'), email: g('provider-email'), postcode: g('provider-postcode'), tech: g('provider-tech'), notes: g('provider-notes') };
+    } else if (type === 'buyer') {
+      data = { ...data, buyer_type: g('buyer-type'), name: g('buyer-name'), org: g('buyer-org'), email: g('buyer-email'), postcode: g('buyer-postcode'), notes: g('buyer-notes') };
+    }
+    try {
+      const res = await fetch(ENDPOINTS[type], {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        document.getElementById(type + '-form').style.display = 'none';
+        document.getElementById(type + '-success').style.display = 'block';
+      } else {
+        alert('Something went wrong — please try again or email us directly.');
+      }
+    } catch(e) {
+      alert('Something went wrong — please check your connection and try again.');
+    }
+  }
+</script>
+</body>
+</html>
