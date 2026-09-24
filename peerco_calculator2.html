@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex"><!-- review period: remove this line at launch -->
+<title>PeerCo — What could your upgrade save?</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* PeerCo brand, matched to peerco.ai */
+  :root {
+    --navy: #173b6c;
+    --navy-2: #1f52a0;
+    --green: #77fb97;          /* brand green: fills and large display text */
+    --green-ink: #15803d;      /* darker green for small text on white */
+    --green-wash: #eafdf0;
+    --card: #f0f3f8;           /* light blue-grey card background */
+    --ink: #1f2937;
+    --muted: #4b5563;
+    --line: #dde3ec;
+    --white: #ffffff;
+    --warn-bg: #fff8e8;
+    --warn-ink: #8a5a00;
+    --radius: 12px;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-size: 16px; line-height: 1.55; color: var(--ink); background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--navy-2); }
+  :focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
+
+  /* Header */
+  .top { background: var(--white); }
+  .top-inner { max-width: 1240px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--navy); font-weight: 700; font-size: 22px; letter-spacing: -0.02em; }
+  .brand img { height: 40px; width: auto; }
+  .top .area { margin-left: auto; font-size: 16px; font-weight: 500; color: var(--ink); }
+  @media (max-width: 420px) { .top .area { font-size: 14px; } }
+
+  /* Intro */
+  .intro { padding: 56px 24px 48px; text-align: center; }
+  .intro-inner { max-width: 860px; margin: 0 auto; }
+  .intro h1 { font-weight: 800; font-size: clamp(36px, 6vw, 64px); line-height: 1.05; letter-spacing: -0.035em; margin: 0 0 20px; color: var(--navy); }
+  .intro h1 .accent { color: var(--green); display: block; }
+  .intro p { margin: 0 auto; max-width: 62ch; color: var(--muted); font-size: 18px; }
+
+  /* Layout */
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px 64px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 28px; align-items: start; }
+  @media (max-width: 920px) { .wrap { grid-template-columns: 1fr; } }
+
+  .panel { background: var(--card); border-radius: var(--radius); padding: 28px; }
+  .panel + .panel { margin-top: 20px; }
+  .results { position: sticky; top: 16px; background: var(--white); border: 1px solid var(--line); }
+  @media (max-width: 920px) { .results { position: static; } }
+
+  h2 { font-size: 20px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.02em; color: var(--ink); }
+  .step-no { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--green); color: var(--navy); font-size: 14px; font-weight: 700; margin-right: 10px; vertical-align: 1px; }
+  .panel > .lede { margin: 0 0 20px; color: var(--muted); font-size: 15px; }
+
+  /* Fields */
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .fields .full { grid-column: 1 / -1; }
+  @media (max-width: 520px) { .fields { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  label, .label { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .hint { font-size: 13px; color: var(--muted); line-height: 1.4; }
+  input[type="number"], select {
+    width: 100%; height: 46px; padding: 0 12px; font: inherit; font-size: 15px; color: var(--ink);
+    background: var(--white); border: 1px solid #cfd7e3; border-radius: 8px;
+  }
+  select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) 20px, calc(100% - 13px) 20px; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 32px; }
+  input:focus, select:focus { border-color: var(--navy-2); outline: none; box-shadow: 0 0 0 3px rgba(119,251,151,0.45); }
+  .with-unit { display: flex; gap: 8px; }
+  .with-unit input { flex: 1; }
+  .seg { display: inline-flex; border: 1px solid #cfd7e3; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: var(--white); }
+  .seg button { font: inherit; font-size: 14px; font-weight: 500; border: 0; background: var(--white); color: var(--ink); padding: 0 12px; height: 44px; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+  .hours { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .hours select { width: auto; min-width: 96px; }
+  .check { display: flex; gap: 10px; align-items: center; font-size: 14px; font-weight: 500; }
+  .check input { width: 18px; height: 18px; accent-color: var(--navy); }
+
+  /* Upgrade rows */
+  .upgrade { background: var(--white); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 10px; transition: border-color .15s; }
+  .upgrade > label.toggle { display: flex; gap: 12px; align-items: flex-start; padding: 16px; cursor: pointer; }
+  .upgrade > label.toggle input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--navy); flex-shrink: 0; }
+  .upgrade .name { font-weight: 700; font-size: 16px; display: block; color: var(--ink); }
+  .upgrade .what { font-size: 14px; color: var(--muted); font-weight: 400; }
+  .upgrade .opts { display: none; padding: 0 16px 16px 46px; }
+  .upgrade.on { border: 2px solid var(--green); }
+  .upgrade.on .opts { display: grid; }
+  .upgrade .note { font-size: 13px; font-weight: 400; color: var(--warn-ink); background: var(--warn-bg); padding: 8px 10px; border-radius: 6px; margin-top: 4px; }
+  .upgrade.disabled { opacity: 0.55; }
+
+  details.more { border-top: 1px solid var(--line); margin-top: 20px; padding-top: 16px; }
+  details.more summary { cursor: pointer; font-weight: 600; font-size: 15px; color: var(--navy); }
+  details.more[open] summary { margin-bottom: 14px; }
+
+  /* Results */
+  .headline { display: grid; grid-template-columns: 1fr auto; gap: 8px 24px; align-items: end; margin: 16px 0 0; padding: 24px; border-radius: var(--radius); color: #fff;
+              background: linear-gradient(120deg, var(--navy) 0%, var(--navy-2) 100%); }
+  .big { font-weight: 800; font-size: clamp(44px, 6vw, 64px); line-height: 1; letter-spacing: -0.04em; color: #fff; }
+  .big small { font-size: 16px; font-weight: 500; letter-spacing: 0; color: rgba(255,255,255,0.8); margin-left: 8px; }
+  .headline p { margin: 8px 0 0; color: rgba(255,255,255,0.8); font-size: 14px; }
+  .pair { display: flex; gap: 24px; flex-wrap: wrap; text-align: right; }
+  .pair div { font-size: 13px; color: rgba(255,255,255,0.8); }
+  .pair strong { display: block; font-size: 24px; color: #fff; font-weight: 700; letter-spacing: -0.02em; }
+  .headline .neg { color: #ffc2b8; }
+  @media (max-width: 520px) { .headline { grid-template-columns: 1fr; } .pair { text-align: left; } }
+
+  .compare { margin: 16px 0 0; padding: 12px 14px; background: var(--green-wash); border-left: 4px solid var(--green); border-radius: 8px; font-size: 14px; }
+
+  table.breakdown { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 14px; }
+  .breakdown th { text-align: left; font-weight: 600; color: var(--muted); padding: 6px 8px 6px 0; border-bottom: 1px solid var(--line); }
+  .breakdown td { padding: 10px 8px 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .breakdown td:first-child { font-weight: 600; }
+  .breakdown td.num, .breakdown th.num { text-align: right; white-space: nowrap; }
+  .breakdown .detail { display: block; color: var(--muted); font-size: 13px; font-weight: 400; }
+  .neg { color: #b42318; }
+  .empty { color: var(--muted); font-size: 15px; padding: 24px 0; }
+
+  /* Chart */
+  .chart-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+  .chart-head h3 { margin: 0; font-size: 16px; font-weight: 700; }
+  .month-pick { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; }
+  .month-pick input { width: 160px; accent-color: var(--navy); }
+  .month-pick output { min-width: 80px; font-weight: 700; color: var(--navy); }
+  .chart { width: 100%; height: auto; display: block; margin-top: 8px; }
+  .chart text { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--muted); }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .legend span::before { content: ''; display: inline-block; width: 14px; height: 10px; margin-right: 6px; vertical-align: 0; border-radius: 2px; }
+  .legend .l-before::before { background: none; border-top: 2px solid #8a94a4; height: 0; vertical-align: 3px; }
+  .legend .l-after::before { background: var(--green); }
+  .legend .l-ci::before { background: none; border-top: 2px dashed var(--navy); height: 0; vertical-align: 3px; }
+  .insight { font-size: 14px; margin: 10px 0 0; }
+
+  .caveat { font-size: 13px; color: var(--muted); margin-top: 18px; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+  .btn { font: inherit; font-size: 16px; font-weight: 600; border-radius: 8px; padding: 13px 24px; cursor: pointer; text-decoration: none; display: inline-block; transition: filter .15s, background .15s; }
+  .btn-main { background: var(--green); color: var(--navy); border: 2px solid var(--green); }
+  .btn-main:hover { filter: brightness(0.95); }
+  .btn-plain { background: var(--white); color: var(--navy); border: 2px solid var(--green); }
+  .btn-plain:hover { background: var(--green-wash); }
+
+  /* Certificates */
+  .eac { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); }
+  .eac h3 { margin: 0 0 6px; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+  .eac-lede { margin: 0; font-size: 14px; color: var(--muted); }
+  .eac .breakdown { margin-top: 12px; }
+  .breakdown tr.total td { font-weight: 700; border-bottom: 0; color: var(--navy); }
+  .option { margin-top: 16px; padding: 16px 18px; background: var(--card); border-radius: 10px; }
+  .option h4 { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: var(--navy); }
+  .option p { margin: 0; font-size: 14px; }
+
+  .method { max-width: 1240px; margin: 0 auto; padding: 0 24px 48px; }
+  .method details { background: var(--card); border-radius: var(--radius); padding: 20px 28px; }
+  .method summary { cursor: pointer; font-weight: 700; color: var(--navy); }
+  .method p { max-width: 75ch; font-size: 14px; color: #37404f; }
+  footer { text-align: center; font-size: 13px; color: var(--muted); padding: 0 24px 40px; }
+
+  .loadfail { background: var(--warn-bg); color: var(--warn-ink); border-radius: 8px; padding: 14px 16px; font-size: 14px; }
+  .loadfail input { margin-top: 8px; }
+
+  @media print {
+    .top, .intro, #inputs, .actions, .month-pick, footer { display: none !important; }
+    .wrap { display: block; margin: 0; padding: 0; }
+    .results { position: static; border: 0; }
+    .headline { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .method details { padding: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="https://peerco.ai/"><img src="https://storage.googleapis.com/peerco-static-demos/explore/logo.svg" alt=""><span>PeerCo</span></a>
+    <span class="area">Green upgrade calculator</span>
+  </div>
+</header>
+
+<section class="intro">
+  <div class="intro-inner">
+    <h1>What could your <span class="accent">upgrade save?</span></h1>
+    <p>Tell us about your premises and the upgrades you're considering. We'll estimate the carbon and money saved, using real grid data for your region, hour by hour.</p>
+  </div>
+</section>
+
+<div class="wrap">
+
+  <!-- ================= INPUTS ================= -->
+  <div id="inputs">
+    <section class="panel" aria-labelledby="s1">
+      <h2 id="s1"><span class="step-no">1</span>Your premises</h2>
+      <p class="lede">Rough figures are fine.</p>
+      <div class="fields">
+        <div class="field full">
+          <label for="useClass">What is the building used for?</label>
+          <select id="useClass"></select>
+        </div>
+        <div class="field">
+          <label for="area">Floor area</label>
+          <div class="with-unit">
+            <input type="number" id="area" value="2000" min="50" step="50" inputmode="numeric">
+            <div class="seg" role="group" aria-label="Area unit">
+              <button type="button" data-unit="sqft" aria-pressed="true">sq ft</button>
+              <button type="button" data-unit="m2" aria-pressed="false">m²</button>
+            </div>
+          </div>
+          <span class="hint">Only the part you use and pay the bills for.</span>
+        </div>
+        <div class="field">
+          <label for="region">Grid region</label>
+          <select id="region">
+            <option value="13" selected>London</option>
+            <option value="14">South East England</option>
+            <option value="12">South England</option>
+            <option value="11">South West England</option>
+            <option value="10">East England</option>
+            <option value="9">East Midlands</option>
+            <option value="8">West Midlands</option>
+            <option value="7">South Wales</option>
+            <option value="6">North Wales & Merseyside</option>
+            <option value="3">North West England</option>
+            <option value="5">Yorkshire</option>
+            <option value="4">North East England</option>
+            <option value="2">South Scotland</option>
+            <option value="1">North Scotland</option>
+          </select>
+          <span class="hint">Fleet Street Quarter is in London.</span>
+        </div>
+        <div class="field">
+          <label for="heating">How is it heated now?</label>
+          <select id="heating">
+            <option value="gas" selected>Gas boiler</option>
+            <option value="oil">Oil boiler</option>
+            <option value="electric">Electric heaters</option>
+            <option value="heatpump">Heat pump already</option>
+            <option value="none">Landlord supplies heating</option>
+          </select>
+        </div>
+        <div class="field full">
+          <span class="label" id="hoursLabel">Opening hours</span>
+          <div class="hours" role="group" aria-labelledby="hoursLabel">
+            <select id="open" aria-label="Opens"></select>
+            <span>to</span>
+            <select id="close" aria-label="Closes"></select>
+          </div>
+          <label class="check"><input type="checkbox" id="weekends"> Open at weekends</label>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="s2">
+      <h2 id="s2"><span class="step-no">2</span>Upgrades you're considering</h2>
+      <p class="lede">Pick one or more. Each adds to the others.</p>
+
+      <div class="upgrade" data-measure="led">
+        <label class="toggle"><input type="checkbox" id="m-led">
+          <span><span class="name">LED lighting</span><span class="what">Replace old tubes, bulbs and spotlights</span></span></label>
+        <div class="opts fields">
+          <div class="field full">
+            <label for="led-current">What lighting do you have now?</label>
+            <select id="led-current">
+              <option value="fluorescent">Fluorescent tubes</option>
+              <option value="halogen">Halogen spotlights or old bulbs</option>
+              <option value="mixed" selected>A mix, or not sure</option>
+              <option value="someLed">Some LED already</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="upgrade" data-measure="solar">
+        <label class="toggle"><input type="checkbox" id="m-solar">
+          <span><span class="name">Solar panels</span><span class="what">Generate your own power on the roof</span></span></label>
+        <div class="opts fields">
+          <div class="field">
+            <label for="solar-kwp">System size (kWp)</label>
+            <input type="number" id="solar-kwp" value="10" min="0.5" step="0.5">
+            <span class="hint">About 1 kWp for every 55 sq ft (5 m²) of usable roof.</span>
+          </div>
+          <div class="field full note" id="solar-note" hidden>If you rent, solar usually needs your landlord's agreement.</div>
+        </div>
+      </div>
+
+      <div class="upgrade" data-measure="battery">
+        <label class="toggle"><input type="checkbox" id="m-battery">
+          <span><span class="name">Battery</span><span class="what">Store power when the grid is cleaner or cheaper, use it later</span></span></label>
+        <div class="opts fields">
+          <div class="field">
+            <label for="batt-type">Type</label>
+            <select id="batt-type">
+              <option value="plugin">Plug-in</option>
+              <option value="fixed" selected>Fixed</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="batt-kwh">Usable size (kWh)</label>
+            <input type="number" id="batt-kwh" value="20" min="1" step="1">
+          </div>
+          <div class="field full">
+            <label for="batt-mode">Charge it when power is</label>
+            <select id="batt-mode">
+              <option value="carbon" selected>Cleanest (lowest carbon)</option>
+              <option value="cost">Cheapest (needs a night rate below)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="upgrade" data-measure="heatpump">
+        <label class="toggle"><input type="checkbox" id="m-heatpump">
+          <span><span class="name">Heat pump</span><span class="what">Replace your boiler or heaters with an air-source heat pump</span></span></label>
+        <div class="opts fields">
+          <div class="field">
+            <label for="hp-scop">Heat pump efficiency (SCOP)</label>
+            <input type="number" id="hp-scop" value="3" min="1.5" max="6" step="0.1">
+            <span class="hint">3 means 3 units of heat for every unit of electricity. Your installer will quote this.</span>
+          </div>
+          <div class="field full note" id="hp-note" hidden></div>
+        </div>
+      </div>
+
+      <details class="more">
+        <summary>Add your own bills and prices (optional)</summary>
+        <div class="fields">
+          <div class="field">
+            <label for="bill-elec">Electricity used per year (kWh)</label>
+            <input type="number" id="bill-elec" placeholder="From your bills" min="0">
+          </div>
+          <div class="field">
+            <label for="bill-gas">Heating fuel used per year (kWh)</label>
+            <input type="number" id="bill-gas" placeholder="Gas or oil for heating" min="0">
+          </div>
+          <div class="field">
+            <label for="p-elec">Electricity price (p/kWh)</label>
+            <input type="number" id="p-elec" value="26" min="0" step="0.1">
+          </div>
+          <div class="field">
+            <label for="p-night">Night rate, midnight–7am (p/kWh)</label>
+            <input type="number" id="p-night" placeholder="If you have one" min="0" step="0.1">
+          </div>
+          <div class="field">
+            <label for="p-export">Export price (p/kWh)</label>
+            <input type="number" id="p-export" value="5" min="0" step="0.1">
+            <span class="hint">What you're paid for solar power you send to the grid.</span>
+          </div>
+          <div class="field">
+            <label for="p-gas">Gas or oil price (p/kWh)</label>
+            <input type="number" id="p-gas" value="6" min="0" step="0.1">
+          </div>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <!-- ================= RESULTS ================= -->
+  <section class="panel results" aria-labelledby="r-title" aria-live="polite">
+    <h2 id="r-title">Your estimated savings each year</h2>
+    <div id="results-body"><p class="empty">Loading grid data…</p></div>
+  </section>
+</div>
+
+<section class="method">
+  <details>
+    <summary>How we calculate this</summary>
+    <p>We estimate how much electricity your premises use in every half-hour of a typical year, based on the building type, floor area and opening hours (or your own bills, if you add them). For offices, the daily electricity pattern comes from measured meter data: recent half-hourly data from a London office (2023–25), blended with 36 European office buildings from the Building Data Genome Project 2. The heating pattern comes from the same building's half-hourly boiler gas data, so heat pump electricity falls when heating is actually needed. Other building types use a simpler pattern based on opening hours until measured data is added. Each upgrade changes that pattern: LED lighting lowers use while you're open, solar panels generate during daylight, a battery moves use from one time of day to another, and a heat pump replaces boiler fuel with electricity.</p>
+    <p>Each half-hour of change is multiplied by the carbon intensity of the electricity grid in your region at that time of day, in that month, using <span id="m-year">2025</span> data. This matters because grid power is usually cleaner in the middle of the day and dirtier in winter evenings, so the same kilowatt-hour saved can be worth very different amounts of carbon. Solar power you send to the grid is counted as displacing grid power at the time it's exported.</p>
+    <p>Energy attribute certificates (EACs) record changes in consumption, not only renewable generation, so they capture what happens behind the meter that grid-level certificates like REGOs miss. We count electricity saved by LED lighting, solar power used on site and electricity a battery moves to cleaner times. Exported solar is left out to avoid double counting with REGOs. Certificates for heat pumps are still being developed; in the meantime, the gas or oil a heat pump avoids is shown as a separate option that could be sold for a fixed period.</p>
+    <p>Gas and oil use carbon factors from the UK government's greenhouse gas conversion factors. Building energy use starts from typical benchmarks for each type of premises, which vary a lot between real buildings, so these are indicative estimates only. An installer's quote and your actual meter data will give firmer figures.</p>
+    <p>Regional carbon intensity data: <a href="https://carbonintensity.org.uk/" rel="noopener">Carbon Intensity API</a>, National Energy System Operator, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>. Regional values are modelled estimates.</p>
+  </details>
+</section>
+
+<footer>PeerCo · Carbon intensity data © National Energy System Operator (CC BY 4.0)</footer>
+
+<script>
+/* ================= CONFIG — edit these before upload ================= */
+const CONFIG = {
+  dataUrl: 'carbon_profiles.json',               // sits next to this page in the bucket
+  shapesUrl: 'load_shapes.json',                 // measured load shapes by building type (optional)
+  registerUrl: 'https://formspree.io/f/REPLACE_ME',   // TODO: your Formspree form URL
+  showEac: true                                  // EAC section — confirm price, share and basis with Elaine
+};
+
+/* ===================================================================
+   PeerCo calculator engine
+   Pure functions, no DOM. Exposed as PeerCoCalc so the chat agent can
+   reuse exactly the same maths later.
+   Every assumption lives in ASSUMPTIONS so it can be reviewed in one place.
+   =================================================================== */
+const PeerCoCalc = (() => {
+
+  const SQFT_PER_M2 = 10.7639;
+
+  const ASSUMPTIONS = {
+    // Prices (£/kWh) — defaults, user can override in the page
+    elecPrice: 0.26,        // typical SME single-rate unit price
+    exportPrice: 0.05,      // typical small-business export rate
+    gasPrice: 0.06,
+    oilPrice: 0.08,
+    // Emission factors (kgCO2e per kWh of fuel, gross CV) — DESNZ conversion
+    // factors; check against the latest year before launch
+    gasFactor: 0.18290,
+    oilFactor: 0.24677,     // burning oil (kerosene)
+    boilerEfficiency: 0.85,
+    heatPumpSCOP: 3.0,      // seasonal efficiency of an air-source heat pump
+    // Battery
+    battery: {
+      fixed:  { powerPerKwh: 0.5, maxPowerKw: 50, roundTrip: 0.90 },
+      plugin: { powerPerKwh: 0.5, maxPowerKw: 0.8, roundTrip: 0.85 }
+    },
+    // Share of the lighting load an LED upgrade removes, by current lighting
+    ledSaving: { fluorescent: 0.50, halogen: 0.75, mixed: 0.55, someLed: 0.30 },
+    // Energy attribute certificates (EACs) — PeerCo certificates for changes in
+    // consumption, including behind the meter. CONFIRM ALL WITH ELAINE BEFORE LAUNCH
+    eac: {
+      pricePerMwh: 15,           // £ per MWh of certified change
+      shareToSme: 1,             // show full certificate value (revenue split not shown on the page)
+      solarIncludeExport: false, // exported solar may already earn REGOs: excluded to avoid double counting
+      heatPumpBasis: 'none'      // no heat pump methodology yet. Options when there is: 'net', 'fuel', 'electricity'
+    },
+    // Separate option: selling the gas or oil a heat pump avoids, for a fixed number of years
+    avoidedFuel: {
+      pricePerMwh: 15,           // £ per MWh of fuel avoided — CONFIRM
+      years: 5
+    }
+  };
+
+  /* Building use classes.
+     elec  = typical electricity use, kWh per m² per year
+     heat  = typical space-heating fuel use, kWh per m² per year
+     light = share of electricity used for lighting
+     base  = out-of-hours electricity as a fraction of open-hours level
+     Figures are simplified CIBSE TM46-style benchmarks: REVIEW. */
+  const USE_CLASSES = {
+    office:    { label: 'Office',                          ref: 'E(g)(i)',  elec: 95,  heat: 120, light: 0.25, base: 0.30, open: 8,  close: 18, weekends: false },
+    retail:    { label: 'Shop or showroom',                ref: 'E(a)',     elec: 165, heat: 90,  light: 0.40, base: 0.15, open: 9,  close: 18, weekends: true  },
+    cafe:      { label: 'Café or restaurant',              ref: 'E(b)',     elec: 200, heat: 150, light: 0.15, base: 0.35, open: 7,  close: 17, weekends: true  },
+    pub:       { label: 'Pub or bar',                      ref: 'Sui generis', elec: 130, heat: 200, light: 0.20, base: 0.30, open: 11, close: 23, weekends: true  },
+    hotel:     { label: 'Hotel or guest house',            ref: 'C1',       elec: 105, heat: 250, light: 0.20, base: 0.50, open: 6,  close: 23, weekends: true  },
+    services:  { label: 'Clinic or professional services', ref: 'E(c)/E(e)', elec: 80, heat: 150, light: 0.25, base: 0.25, open: 8,  close: 18, weekends: false },
+    gym:       { label: 'Gym or leisure',                  ref: 'E(d)',     elec: 120, heat: 200, light: 0.25, base: 0.30, open: 6,  close: 22, weekends: true  },
+    workshop:  { label: 'Workshop or light industrial',    ref: 'E(g)(iii)', elec: 60, heat: 150, light: 0.35, base: 0.20, open: 8,  close: 17, weekends: false },
+    community: { label: 'Community, cultural or heritage', ref: 'F1/F2',    elec: 70,  heat: 180, light: 0.30, base: 0.20, open: 10, close: 18, weekends: true  }
+  };
+
+  // Approximate annual solar yield, kWh per kWp, by Carbon Intensity region
+  // (typical PVGIS-style figures for a south-facing roof; installer's figure should replace)
+  const SOLAR_YIELD = { 1: 800, 2: 830, 3: 870, 4: 850, 5: 880, 6: 900, 7: 950,
+                        8: 900, 9: 920, 10: 960, 11: 1000, 12: 1000, 13: 950, 14: 980 };
+  // Share of annual solar output by month (UK typical)
+  const SOLAR_MONTH = [0.03, 0.045, 0.08, 0.115, 0.135, 0.14, 0.135, 0.12, 0.09, 0.06, 0.03, 0.02];
+  // Daylight hours by month at ~52°N
+  const DAYLIGHT = [8.0, 9.8, 11.8, 13.9, 15.7, 16.6, 16.2, 14.6, 12.6, 10.6, 8.7, 7.7];
+  // Heating degree days by month (London typical) — shapes heat demand across the year
+  const HDD = [330, 290, 260, 190, 110, 50, 20, 25, 60, 140, 240, 310];
+
+  const DAYTYPES = ['weekday', 'weekend'];
+
+  function dayCounts(year) {
+    const c = Array.from({ length: 12 }, () => ({ weekday: 0, weekend: 0 }));
+    for (let d = new Date(Date.UTC(year, 0, 1)); d.getUTCFullYear() === year; d.setUTCDate(d.getUTCDate() + 1)) {
+      const w = d.getUTCDay();
+      c[d.getUTCMonth()][(w === 0 || w === 6) ? 'weekend' : 'weekday']++;
+    }
+    return c;
+  }
+
+  // Build [month][daytype] → 48 half-hourly weights
+  function grid(fn) {
+    return Array.from({ length: 12 }, (_, m) => {
+      const o = {};
+      DAYTYPES.forEach(dt => { o[dt] = Array.from({ length: 48 }, (_, h) => fn(m, dt, h)); });
+      return o;
+    });
+  }
+
+  // Scale weights so the whole year sums to `total` kWh
+  function scaleTo(weights, total, days) {
+    let sum = 0;
+    for (let m = 0; m < 12; m++) DAYTYPES.forEach(dt => {
+      sum += days[m][dt] * weights[m][dt].reduce((a, b) => a + b, 0);
+    });
+    const k = sum > 0 ? total / sum : 0;
+    return weights.map(o => ({ weekday: o.weekday.map(v => v * k), weekend: o.weekend.map(v => v * k) }));
+  }
+
+  function isOpen(hours, dt, h) {
+    if (dt === 'weekend' && !hours.weekends) return false;
+    const t = h / 2;
+    return t >= hours.open && t < hours.close;
+  }
+
+  function solarPerKwp(regionId, days) {
+    const annual = SOLAR_YIELD[regionId] || 950;
+    return grid((m, dt, h) => {
+      const bst = m >= 3 && m <= 9;                // April–October on summer time
+      const noon = bst ? 13 : 12;
+      const dl = DAYLIGHT[m];
+      const t = (h + 0.5) / 2;                       // slot midpoint, local clock hours
+      const x = (t - (noon - dl / 2)) / dl;
+      const shape = (x > 0 && x < 1) ? Math.pow(Math.sin(Math.PI * x), 1.3) : 0;
+      return shape;
+    }).map((o, m) => {
+      const daysInMonth = days[m].weekday + days[m].weekend;
+      const dailyKwh = annual * SOLAR_MONTH[m] / daysInMonth;
+      const norm = a => { const s = a.reduce((p, q) => p + q, 0); return a.map(v => s ? v / s * dailyKwh : 0); };
+      return { weekday: norm(o.weekday), weekend: norm(o.weekend) };
+    });
+  }
+
+  // Carbon-first battery dispatch for one typical day.
+  // F = net grid flow per half-hour before the battery (kWh, + import / − export)
+  // `signal` is what the battery optimises against: grid carbon intensity or unit price
+  function dispatch(F, CI, capKwh, powerKw, eta) {
+    const slot = powerKw * 0.5;
+    const ch = new Array(48).fill(0), dis = new Array(48).fill(0);
+    const idx = [...Array(48).keys()];
+    const disC = idx.filter(i => F[i] > 0).sort((a, b) => CI[b] - CI[a]);
+    const chC = idx.slice().sort((a, b) => CI[a] - CI[b]);
+    let out = 0, di = 0, ci = 0;
+    while (out < capKwh - 1e-9 && di < disC.length && ci < chC.length) {
+      const d = disC[di], c = chC[ci];
+      if (c === d || dis[c] > 0) { ci++; continue; }
+      if (ch[d] > 0) { di++; continue; }
+      if (CI[d] <= CI[c] / eta) break;              // no carbon benefit left
+      const dRoom = Math.min(slot, F[d]) - dis[d];
+      const cRoom = (slot - ch[c]) * eta;
+      if (dRoom <= 1e-9) { di++; continue; }
+      if (cRoom <= 1e-9) { ci++; continue; }
+      const amt = Math.min(dRoom, cRoom, capKwh - out);
+      dis[d] += amt; ch[c] += amt / eta; out += amt;
+    }
+    return { ch, dis };
+  }
+
+  // Certificate volume (MWh) for each upgrade, on the basis set in ASSUMPTIONS.eac
+  function eacs(steps, E) {
+    const rows = steps.map(st => {
+      let kwh = 0, basis = '';
+      if (st.key === 'led') { kwh = -st.elecChangeKwh; basis = 'Electricity saved'; }
+      else if (st.key === 'solar') {
+        kwh = E.solarIncludeExport ? st.solarKwh : st.solarKwh - Math.max(st.exportChangeKwh, 0);
+        basis = E.solarIncludeExport ? 'Solar generated' : 'Solar used on site';
+      }
+      else if (st.key === 'battery') { kwh = st.shiftedKwh; basis = 'Electricity moved to cleaner times'; }
+      else if (st.key === 'hp') {
+        if (!['fuel', 'electricity', 'net'].includes(E.heatPumpBasis)) {
+          return { key: st.key, label: st.label, basis: 'Methodology in development', mwh: 0, value: 0, pending: true };
+        }
+        if (E.heatPumpBasis === 'fuel') { kwh = st.fuelAvoidedKwh; basis = 'Gas or oil replaced'; }
+        else if (E.heatPumpBasis === 'electricity') { kwh = st.elecChangeKwh; basis = 'Heating moved onto electricity'; }
+        else { kwh = st.fuelAvoidedKwh - st.elecChangeKwh; basis = 'Net energy saved'; }
+      }
+      const mwh = Math.max(kwh, 0) / 1000;
+      return { key: st.key, label: st.label, basis, mwh, value: mwh * E.pricePerMwh * E.shareToSme };
+    });
+    const mwh = rows.reduce((a, r) => a + r.mwh, 0);
+    return { rows, mwh, value: mwh * E.pricePerMwh * E.shareToSme, pricePerMwh: E.pricePerMwh, shareToSme: E.shareToSme };
+  }
+
+  function run(input, carbon, shapes) {
+    const A = Object.assign({}, ASSUMPTIONS, input.assumptions || {});
+    A.eac = Object.assign({}, ASSUMPTIONS.eac, (input.assumptions || {}).eac || {});
+    A.avoidedFuel = Object.assign({}, ASSUMPTIONS.avoidedFuel, (input.assumptions || {}).avoidedFuel || {});
+    const uc = USE_CLASSES[input.useClass] || USE_CLASSES.office;
+    const regionId = String(input.regionId || 13);
+    const region = carbon.regions[regionId];
+    const year = carbon.meta.year;
+    const days = dayCounts(year);
+    const areaM2 = input.areaUnit === 'm2' ? +input.area : +input.area / SQFT_PER_M2;
+    const hours = Object.assign({ open: uc.open, close: uc.close, weekends: uc.weekends }, input.hours || {});
+    const M = input.measures || {};
+    const bills = input.bills || {};
+    const prices = Object.assign({ elec: A.elecPrice, night: null, export: A.exportPrice, gas: A.gasPrice, oil: A.oilPrice }, input.prices || {});
+    const heating = input.heating || 'gas';
+
+    // ---- Annual baseline quantities ----
+    const scop = (M.heatPump && M.heatPump.scop) ? +M.heatPump.scop : A.heatPumpSCOP;
+    const heatBenchmark = areaM2 * uc.heat;              // fuel-equivalent kWh
+    let fuel = 0, usefulHeat = 0;
+    if (heating === 'gas' || heating === 'oil') {
+      fuel = bills.heatFuelKwh ? +bills.heatFuelKwh : heatBenchmark;
+      usefulHeat = fuel * A.boilerEfficiency;
+    } else if (heating === 'electric' || heating === 'heatpump') {
+      usefulHeat = heatBenchmark * A.boilerEfficiency;
+    }
+    const elecHeatEff = heating === 'heatpump' ? scop : 1;   // electric heaters: 1 kWh in = 1 kWh heat
+    let heatingElec = (heating === 'electric' || heating === 'heatpump') ? usefulHeat / elecHeatEff : 0;
+
+    let nonHeatElec = bills.elecKwh ? +bills.elecKwh : areaM2 * uc.elec;
+    if (bills.elecKwh && heatingElec > 0) {
+      // the bill already includes electric heating: split it out
+      nonHeatElec = Math.max(+bills.elecKwh - heatingElec, 0.4 * +bills.elecKwh);
+      heatingElec = +bills.elecKwh - nonHeatElec;
+      usefulHeat = heatingElec * elecHeatEff;
+    }
+    const lightKwh = nonHeatElec * uc.light;
+    const otherKwh = nonHeatElec - lightKwh;
+
+    // ---- Half-hourly profiles ----
+    const light = scaleTo(grid((m, dt, h) =>
+      (isOpen(hours, dt, h) ? 1 : 0.1) * (1 + 0.2 * Math.cos(2 * Math.PI * m / 12))), lightKwh, days);
+    // Non-lighting electricity: use a measured load shape for this use class if one is loaded,
+    // otherwise the simple open/closed shape. Lighting keeps the opening-hours shape so LED
+    // savings land when the lights are on.
+    const measured = shapes && shapes[input.useClass] && shapes[input.useClass].profile;
+    let other;
+    if (measured) {
+      const total = scaleTo(grid((m, dt, h) => measured[String(m + 1)][dt][h]), nonHeatElec, days);
+      const rest = total.map((o, m) => ({
+        weekday: o.weekday.map((v, h) => Math.max(v - light[m].weekday[h], 0.05 * v)),
+        weekend: o.weekend.map((v, h) => Math.max(v - light[m].weekend[h], 0.05 * v))
+      }));
+      other = scaleTo(rest, otherKwh, days);
+    } else {
+      other = scaleTo(grid((m, dt, h) => isOpen(hours, dt, h) ? 1 : uc.base), otherKwh, days);
+    }
+    const measuredHeat = shapes && shapes[input.useClass] && shapes[input.useClass].heatProfile;
+    const heat = measuredHeat
+      ? scaleTo(grid((m, dt, h) => measuredHeat[String(m + 1)][dt][h]), usefulHeat, days)
+      : scaleTo(grid((m, dt, h) => {
+      const openDay = dt === 'weekday' || hours.weekends;
+      const t = h / 2;
+      let w;
+      if (!openDay) w = 0.15;
+      else if (t >= hours.open - 1 && t < hours.open) w = 2;    // pre-heat
+      else if (isOpen(hours, dt, h)) w = 1;
+      else w = 0.1;
+      return w * HDD[m];
+    }), usefulHeat, days);
+    const solar = solarPerKwp(+regionId, days);
+
+    const batt = M.battery ? A.battery[M.battery.type === 'plugin' ? 'plugin' : 'fixed'] : null;
+    const battCap = M.battery ? +M.battery.kwh : 0;
+    const battPower = batt ? Math.min(battCap * batt.powerPerKwh, batt.maxPowerKw) : 0;
+    const ledCut = M.led ? (A.ledSaving[M.led.currentLighting] ?? A.ledSaving.mixed) : 0;
+    const hpApplies = !!M.heatPump && heating !== 'heatpump' && heating !== 'none';
+
+    const hasNight = prices.night != null && prices.night !== '' && !isNaN(+prices.night);
+    const unitPrice = h => (hasNight && h < 14) ? +prices.night : +prices.elec;   // night rate 00:00–07:00
+
+    // ---- Evaluate one scenario (which measures are switched on) ----
+    function scenario(on) {
+      const r = { carbonKg: 0, carbonFlatKg: 0, bill: 0, importKwh: 0, exportKwh: 0,
+                  solarKwh: 0, shiftedKwh: 0, fuelKwh: 0, elecDemandKwh: 0, days: {} };
+      for (let m = 0; m < 12; m++) DAYTYPES.forEach(dt => {
+        const CI = region.profile[String(m + 1)][dt];
+        const n = days[m][dt];
+        const L = new Array(48), F = new Array(48);
+        for (let h = 0; h < 48; h++) {
+          let l = light[m][dt][h] * (on.led ? 1 - ledCut : 1) + other[m][dt][h];
+          if (on.hp && hpApplies) l += heat[m][dt][h] / scop;
+          else if (heatingElec > 0) l += heat[m][dt][h] / elecHeatEff;
+          const s = on.solar && M.solar ? solar[m][dt][h] * +M.solar.kwp : 0;
+          L[h] = l; F[h] = l - s;
+          r.solarKwh += s * n;
+          r.elecDemandKwh += l * n;
+        }
+        let ch = new Array(48).fill(0), dis = new Array(48).fill(0);
+        if (on.battery && battCap > 0) {
+          const priceSig = Array.from({ length: 48 }, (_, h) => unitPrice(h));
+          const flatTariff = priceSig.every(v => v === priceSig[0]);
+          const sig = (M.battery.mode === 'cost' && !flatTariff) ? priceSig : CI;
+          ({ ch, dis } = dispatch(F, sig, battCap, battPower, batt.roundTrip));
+        }
+        const flow = F.map((f, h) => f + ch[h] - dis[h]);
+        flow.forEach((f, h) => {
+          r.carbonKg += f * CI[h] / 1000 * n;
+          r.carbonFlatKg += f * region.annual_mean / 1000 * n;
+          const p = unitPrice(h);
+          if (f > 0) { r.importKwh += f * n; r.bill += f * p * n; }
+          else { r.exportKwh += -f * n; r.bill += f * prices.export * n; }
+          r.shiftedKwh += dis[h] * n;
+        });
+        r.days[`${m}-${dt}`] = { load: L, flow, ci: CI };
+      });
+      const fuelKwh = (heating === 'gas' || heating === 'oil') && !(on.hp && hpApplies) ? fuel : 0;
+      const factor = heating === 'oil' ? A.oilFactor : A.gasFactor;
+      const fuelPrice = heating === 'oil' ? prices.oil : prices.gas;
+      r.fuelKwh = fuelKwh;
+      r.carbonKg += fuelKwh * factor;
+      r.carbonFlatKg += fuelKwh * factor;
+      r.bill += fuelKwh * fuelPrice;
+      return r;
+    }
+
+    // Add measures one at a time so each gets its own share of the savings
+    const order = [
+      { key: 'hp', label: 'Heat pump', active: hpApplies },
+      { key: 'led', label: 'LED lighting', active: !!M.led },
+      { key: 'solar', label: 'Solar panels', active: !!M.solar && +M.solar.kwp > 0 },
+      { key: 'battery', label: M.battery && M.battery.type === 'plugin' ? 'Plug-in battery' : 'Battery storage', active: battCap > 0 }
+    ];
+    const on = {};
+    const baseline = scenario(on);
+    let prev = baseline;
+    const steps = [];
+    order.filter(o => o.active).forEach(o => {
+      on[o.key] = true;
+      const cur = scenario(Object.assign({}, on));
+      steps.push({
+        key: o.key, label: o.label,
+        carbonSavedT: (prev.carbonKg - cur.carbonKg) / 1000,
+        billSaved: prev.bill - cur.bill,
+        elecChangeKwh: cur.elecDemandKwh - prev.elecDemandKwh,
+        fuelAvoidedKwh: prev.fuelKwh - cur.fuelKwh,
+        solarKwh: cur.solarKwh - prev.solarKwh,
+        shiftedKwh: cur.shiftedKwh - prev.shiftedKwh,
+        exportChangeKwh: cur.exportKwh - prev.exportKwh
+      });
+      prev = cur;
+    });
+    const after = prev;
+
+    const debug = input.debug ? { light, other, heat, solar, measured: measured || null, lightKwh, otherKwh, nonHeatElec, usefulHeat, fuel, ledCut, scop, days } : undefined;
+    return {
+      debug,
+      input: { useClass: input.useClass, areaM2, areaSqft: areaM2 * SQFT_PER_M2, regionId, regionName: region.name, heating, hours },
+      baseline, after, steps,
+      carbonSavedT: (baseline.carbonKg - after.carbonKg) / 1000,
+      carbonSavedFlatT: (baseline.carbonFlatKg - after.carbonFlatKg) / 1000,
+      billSaved: baseline.bill - after.bill,
+      eac: eacs(steps, A.eac),
+      avoidedFuel: (() => {
+        const hp = steps.find(st => st.key === 'hp');
+        const mwhPerYear = hp ? Math.max(hp.fuelAvoidedKwh, 0) / 1000 : 0;
+        const F = A.avoidedFuel;
+        return { fuel: heating === 'oil' ? 'oil' : 'gas', mwhPerYear, years: F.years, pricePerMwh: F.pricePerMwh,
+                 totalMwh: mwhPerYear * F.years, value: mwhPerYear * F.years * F.pricePerMwh };
+      })(),
+      assumptions: A,
+      dataYear: year,
+      loadShape: measured ? shapes[input.useClass].source : 'Typical opening-hours pattern (not measured)',
+      heatShape: measuredHeat ? shapes[input.useClass].heatSource : 'Modelled from opening hours and heating degree days'
+    };
+  }
+
+  return { run, ASSUMPTIONS, USE_CLASSES, SQFT_PER_M2 };
+})();
+
+
+
+/* ================= PAGE LOGIC ================= */
+(() => {
+  const $ = id => document.getElementById(id);
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  let DATA = null, SHAPES = null, areaUnit = 'sqft', hoursTouched = false, chartMonth = 1, lastResult = null;
+
+  // --- populate selects ---
+  Object.entries(PeerCoCalc.USE_CLASSES).forEach(([k, v]) => {
+    const o = document.createElement('option'); o.value = k; o.textContent = v.label; $('useClass').appendChild(o);
+  });
+  const hh = h => String(h).padStart(2, '0') + ':00';
+  for (let h = 0; h <= 24; h++) {
+    if (h < 24) { const o = document.createElement('option'); o.value = h; o.textContent = hh(h); $('open').appendChild(o); }
+    if (h > 0) { const o = document.createElement('option'); o.value = h; o.textContent = h === 24 ? 'midnight' : hh(h); $('close').appendChild(o); }
+  }
+  function applyUseClassHours() {
+    const uc = PeerCoCalc.USE_CLASSES[$('useClass').value];
+    $('open').value = uc.open; $('close').value = uc.close; $('weekends').checked = uc.weekends;
+  }
+
+  // --- URL prefill (lets the chat agent link straight to a filled-in calculator) ---
+  // e.g. ?use=cafe&area=2000&unit=sqft&region=13&heating=gas&measures=led,battery&kwp=10&kwh=5&battery=plugin
+  const q = new URLSearchParams(location.search);
+  if (q.get('use') && PeerCoCalc.USE_CLASSES[q.get('use')]) $('useClass').value = q.get('use');
+  applyUseClassHours();
+  if (q.get('area')) $('area').value = q.get('area');
+  if (q.get('unit') === 'm2') setUnit('m2', false);
+  if (q.get('region')) $('region').value = q.get('region');
+  if (q.get('heating')) $('heating').value = q.get('heating');
+  if (q.get('kwp')) $('solar-kwp').value = q.get('kwp');
+  if (q.get('kwh')) $('batt-kwh').value = q.get('kwh');
+  if (q.get('battery')) $('batt-type').value = q.get('battery');
+  (q.get('measures') || '').split(',').filter(Boolean).forEach(m => { const el = $('m-' + m); if (el) el.checked = true; });
+
+  // --- unit toggle ---
+  function setUnit(u, convert = true) {
+    if (u === areaUnit) return;
+    const v = +$('area').value;
+    if (convert && v) $('area').value = Math.round(u === 'm2' ? v / PeerCoCalc.SQFT_PER_M2 : v * PeerCoCalc.SQFT_PER_M2);
+    areaUnit = u;
+    document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.unit === u));
+  }
+  document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => { setUnit(b.dataset.unit); update(); }));
+
+  // --- events ---
+  $('useClass').addEventListener('change', () => { if (!hoursTouched) applyUseClassHours(); update(); });
+  ['open', 'close', 'weekends'].forEach(id => $(id).addEventListener('change', () => { hoursTouched = true; update(); }));
+  $('batt-type').addEventListener('change', () => { $('batt-kwh').value = $('batt-type').value === 'plugin' ? 5 : 20; update(); });
+  document.querySelectorAll('#inputs input, #inputs select').forEach(el => {
+    if (!['useClass', 'open', 'close', 'weekends', 'batt-type'].includes(el.id)) {
+      el.addEventListener('input', update); el.addEventListener('change', update);
+    }
+  });
+
+  // --- formatting ---
+  const gbp = n => {
+    const r = Math.abs(n) >= 1000 ? Math.round(n / 10) * 10 : Math.round(n);
+    return (r < 0 ? '−£' : '£') + Math.abs(r).toLocaleString('en-GB');
+  };
+  const tonnes = t => Math.abs(t) < 1 ? t.toFixed(2) : t.toFixed(1);
+  const kwh = n => {
+    const a = Math.abs(n), r = a >= 10000 ? Math.round(a / 100) * 100 : a >= 1000 ? Math.round(a / 10) * 10 : Math.round(a);
+    return r.toLocaleString('en-GB') + ' kWh';
+  };
+  const clock = h => { const m = h * 30; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+  const num = id => { const v = $(id).value; return v === '' ? null : +v; };
+
+  function readInputs() {
+    const measures = {};
+    const heating = $('heating').value;
+    if ($('m-led').checked) measures.led = { currentLighting: $('led-current').value };
+    if ($('m-solar').checked) measures.solar = { kwp: num('solar-kwp') || 0 };
+    if ($('m-battery').checked) measures.battery = { kwh: num('batt-kwh') || 0, type: $('batt-type').value, mode: $('batt-mode').value };
+    if ($('m-heatpump').checked) measures.heatPump = { scop: num('hp-scop') || 3 };
+    const pence = id => num(id) == null ? null : num(id) / 100;
+    return {
+      useClass: $('useClass').value, area: num('area') || 0, areaUnit, regionId: $('region').value, heating,
+      hours: { open: +$('open').value, close: +$('close').value, weekends: $('weekends').checked },
+      measures,
+      bills: { elecKwh: num('bill-elec'), heatFuelKwh: num('bill-gas') },
+      prices: { elec: pence('p-elec') ?? 0.26, night: pence('p-night'), export: pence('p-export') ?? 0.05,
+                gas: pence('p-gas') ?? 0.06, oil: pence('p-gas') ?? 0.08 }
+    };
+  }
+
+  function stepDetail(s, heating) {
+    switch (s.key) {
+      case 'led': return `Uses ${kwh(-s.elecChangeKwh)} less electricity`;
+      case 'solar': return `Generates ${kwh(s.solarKwh)} a year`;
+      case 'battery': return `Moves ${kwh(s.shiftedKwh)} to cleaner or cheaper times`;
+      case 'hp': return `Replaces ${kwh(s.fuelAvoidedKwh || 0)} of ${heating === 'oil' ? 'oil' : heating === 'electric' ? 'heater electricity' : 'gas'}, uses ${kwh(s.elecChangeKwh)} ${s.elecChangeKwh >= 0 ? 'more' : 'less'} electricity`;
+    }
+    return '';
+  }
+
+  function update() {
+    // contextual notes
+    const heating = $('heating').value;
+    const hpRow = document.querySelector('[data-measure="heatpump"]');
+    const hpBlocked = heating === 'heatpump' || heating === 'none';
+    hpRow.classList.toggle('disabled', hpBlocked);
+    $('hp-note').hidden = !hpBlocked && heating !== 'electric';
+    $('hp-note').textContent = heating === 'heatpump' ? 'You already have a heat pump, so this upgrade is left out.'
+      : heating === 'none' ? 'Your landlord supplies heating, so a heat pump would be their upgrade.'
+      : 'Replacing electric heaters cuts electricity use by about two-thirds.';
+    $('solar-note').hidden = false;
+    document.querySelectorAll('.upgrade').forEach(u => u.classList.toggle('on', u.querySelector('input[type=checkbox]').checked));
+
+    if (!DATA) return;
+    const input = readInputs();
+    if (!input.area) { $('results-body').innerHTML = '<p class="empty">Enter a floor area to see your estimate.</p>'; return; }
+    const r = PeerCoCalc.run(input, DATA, SHAPES);
+    lastResult = r;
+    render(r, input);
+  }
+
+  function render(r, input) {
+    const body = $('results-body');
+    if (!r.steps.length) {
+      body.innerHTML = `<p class="empty">Your premises' current footprint is about <strong>${tonnes(r.baseline.carbonKg / 1000)} tonnes of CO₂e</strong> a year. Choose an upgrade to see what it would save.</p>` + chartBlock();
+      drawChart(r); return;
+    }
+    const pct = r.baseline.carbonKg > 0 ? Math.round((r.baseline.carbonKg - r.after.carbonKg) / r.baseline.carbonKg * 100) : 0;
+    const diff = r.carbonSavedT - r.carbonSavedFlatT;
+    const diffPct = r.carbonSavedFlatT !== 0 ? Math.round(Math.abs(diff / r.carbonSavedFlatT) * 100) : 0;
+    const compare = Math.abs(diff) < 0.01 ? '' :
+      `<p class="compare">Timing matters: using a single yearly average for the grid would ${diff > 0 ? 'understate' : 'overstate'} this by ${tonnes(Math.abs(diff))} t${diffPct ? ` (${diffPct}%)` : ''}, because ${diff > 0 ? 'your savings fall at times when the grid is dirtier than average' : 'your savings fall at times when the grid is cleaner than average'}.</p>`;
+
+    const rows = r.steps.map(s => `
+      <tr><td>${s.label}<span class="detail">${stepDetail(s, input.heating)}</span></td>
+      <td class="num ${s.carbonSavedT < 0 ? 'neg' : ''}">${tonnes(s.carbonSavedT)} t</td>
+      <td class="num ${s.billSaved < 0 ? 'neg' : ''}">${s.billSaved < 0 ? '+' + gbp(-s.billSaved) + ' cost' : gbp(s.billSaved)}</td></tr>`).join('');
+
+    const notes = [];
+    const hp = r.steps.find(s => s.key === 'hp');
+    if (hp && hp.billSaved < 0) notes.push('Electricity costs more per unit than gas, so a heat pump can raise running costs even as it cuts carbon. Grants and a lower electricity rate change this.');
+    const bt = r.steps.find(s => s.key === 'battery');
+    if (bt && bt.billSaved < 20 && !input.prices.night) notes.push('On a single-rate tariff a battery saves carbon but not much money. Adding a night rate, or pairing it with solar, changes that.');
+    if (bt && input.measures.battery.mode === 'cost' && input.prices.night == null) notes.push('Add your night rate under "Add your own bills and prices" to charge the battery when power is cheapest.');
+
+    body.innerHTML = `
+      <div class="headline">
+        <div>
+          <div class="big">${tonnes(r.carbonSavedT)}<small>tonnes CO₂e</small></div>
+          <p>That's ${pct}% of your premises' estimated ${tonnes(r.baseline.carbonKg / 1000)} t a year.</p>
+        </div>
+        <div class="pair">
+          <div><strong class="${r.billSaved < 0 ? 'neg' : ''}">${r.billSaved < 0 ? '+' + gbp(-r.billSaved) : gbp(r.billSaved)}</strong>${r.billSaved < 0 ? 'extra on bills' : 'off your bills'}</div>
+          ${CONFIG.showEac && r.eac.value > 0 ? `<div><strong>${gbp(r.eac.value)}</strong>certificate value</div>` : ''}
+        </div>
+      </div>
+      ${compare}
+      <table class="breakdown">
+        <thead><tr><th>Upgrade</th><th class="num">Carbon</th><th class="num">Bills</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      ${notes.map(n => `<p class="caveat">${n}</p>`).join('')}
+      ${CONFIG.showEac ? eacBlock(r.eac) : ''}
+      ${chartBlock()}
+      <p class="caveat">Indicative estimates based on typical premises of this type and ${r.dataYear} grid data for ${r.input.regionName}. Daily electricity pattern: ${r.loadShape}.${input.measures.heatPump ? ` Heating pattern: ${r.heatShape}.` : ''}</p>
+      <div class="actions">
+        <a class="btn btn-main" href="${CONFIG.registerUrl}" target="_blank" rel="noopener">Register your interest</a>
+        <button class="btn btn-plain" type="button" onclick="window.print()">Print or save as PDF</button>
+      </div>`;
+    drawChart(r);
+  }
+
+  function eacBlock(e) {
+    if (!e.rows.length) return '';
+    const mwh = v => v >= 10 ? v.toFixed(0) : v.toFixed(1);
+    const rows = e.rows.map(x => x.pending ? `
+      <tr><td>${x.label}<span class="detail">${x.basis}</span></td><td class="num">—</td><td class="num">—</td></tr>` : `
+      <tr><td>${x.label}<span class="detail">${x.basis}</span></td>
+      <td class="num">${mwh(x.mwh)} MWh</td><td class="num">${gbp(x.value)}</td></tr>`).join('');
+    const f = lastResult.avoidedFuel;
+    const fuelBlock = f.mwhPerYear > 0 ? `
+        <div class="option">
+          <h4>Additional option: selling the ${f.fuel} your heat pump avoids</h4>
+          <p>Your heat pump would avoid about ${mwh(f.mwhPerYear)} MWh of ${f.fuel} a year. Selling that avoided ${f.fuel} for ${f.years} years would cover ${mwh(f.totalMwh)} MWh in total, worth about <strong>${gbp(f.value)}</strong> at £${f.pricePerMwh} per MWh. This is separate from, and not included in, the certificate total above.</p>
+        </div>` : '';
+    return `
+      <div class="eac">
+        <h3>Energy attribute certificates</h3>
+        <p class="eac-lede">Each change your upgrades make to when and how much energy you use can be certified, half-hour by half-hour, including changes behind your meter. Buyers pay for these certificates, which gives your upgrades a value on top of the bill savings.</p>
+        <table class="breakdown">
+          <thead><tr><th>Upgrade</th><th class="num">Certified</th><th class="num">Value</th></tr></thead>
+          <tbody>${rows}
+            <tr class="total"><td>Total per year</td><td class="num">${mwh(e.mwh)} MWh</td><td class="num">${gbp(e.value)}</td></tr>
+          </tbody>
+        </table>
+        <p class="caveat">Illustrative full value at £${e.pricePerMwh} per MWh. Actual value depends on the project and the buyer. Solar power you export is not counted here, as it may already earn renewable certificates (REGOs).</p>
+        ${fuelBlock}
+      </div>`;
+  }
+
+  function chartBlock() {
+    return `
+      <div class="chart-head">
+        <h3>When your electricity comes from the grid</h3>
+        <label class="month-pick">A typical weekday in
+          <input type="range" id="month" min="1" max="12" value="${chartMonth}" aria-label="Month">
+          <output id="monthOut">${MONTHS[chartMonth - 1]}</output></label>
+      </div>
+      <svg class="chart" id="chart" viewBox="0 0 520 250" role="img" aria-label="Chart of grid electricity use and grid carbon intensity through the day"></svg>
+      <div class="legend"><span class="l-before">Now</span><span class="l-after">With upgrades</span><span class="l-ci">Grid carbon intensity</span></div>
+      <p class="insight" id="insight"></p>`;
+  }
+
+  function drawChart(r) {
+    const svg = $('chart'); if (!svg) return;
+    const mEl = $('month');
+    mEl.oninput = () => { chartMonth = +mEl.value; $('monthOut').textContent = MONTHS[chartMonth - 1]; drawChart(lastResult); };
+    const key = `${chartMonth - 1}-weekday`;
+    const before = r.baseline.days[key].flow.map(v => v * 2);   // kWh per half-hour → average kW
+    const after = r.after.days[key].flow.map(v => v * 2);
+    const ci = r.baseline.days[key].ci;
+    const W = 520, H = 250, L = 40, R = 44, T = 24, B = 26, pw = W - L - R, ph = H - T - B;
+    const niceMax = v => { if (v <= 0) return 1; const p = Math.pow(10, Math.floor(Math.log10(v))); return Math.ceil(v / p * 2) / 2 * p; };
+    let yMax = niceMax(Math.max(...before, ...after, 0.1));
+    let yMin = Math.min(0, ...after); if (yMin < 0) yMin = -niceMax(-yMin);
+    const ciMax = niceMax(Math.max(...ci) * 1.05);
+    const x = i => L + i / 48 * pw;
+    const y = v => T + (yMax - v) / (yMax - yMin) * ph;
+    const yc = v => T + (1 - v / ciMax) * ph;
+    const step = arr => arr.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}L${x(i + 1).toFixed(1)},${y(v).toFixed(1)}`).join('');
+    const area = arr => `M${x(0)},${y(0)}` + arr.map((v, i) => `L${x(i).toFixed(1)},${y(v).toFixed(1)}L${x(i + 1).toFixed(1)},${y(v).toFixed(1)}`).join('') + `L${x(48)},${y(0)}Z`;
+    const ciPath = ci.map((v, i) => `${i ? 'L' : 'M'}${x(i + 0.5).toFixed(1)},${yc(v).toFixed(1)}`).join('');
+    let g = '';
+    for (let k = 0; k <= 4; k++) {
+      const v = yMin + (yMax - yMin) * k / 4, yy = y(v);
+      g += `<line x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}" stroke="#e8ecf0"/>`;
+      g += `<text x="${L - 6}" y="${yy + 4}" text-anchor="end">${+v.toFixed(1)}</text>`;
+      g += `<text x="${W - R + 6}" y="${yc(ciMax * k / 4) + 4}">${Math.round(ciMax * k / 4)}</text>`;
+    }
+    [0, 6, 12, 18, 24].forEach(h => { g += `<text x="${x(h * 2)}" y="${H - 10}" text-anchor="middle">${String(h).padStart(2, '0')}:00</text>`; });
+    g += `<text x="${L}" y="${T - 10}" text-anchor="start">kW from grid</text><text x="${W - 2}" y="${T - 10}" text-anchor="end">gCO₂/kWh</text>`;
+    if (yMin < 0) g += `<line x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}" stroke="#8a94a4"/>`;
+    svg.innerHTML = g +
+      `<path d="${area(after)}" fill="var(--green)" fill-opacity="0.75"/>` +
+      `<path d="${step(before)}" fill="none" stroke="#8a94a4" stroke-width="2"/>` +
+      `<path d="${ciPath}" fill="none" stroke="var(--navy)" stroke-width="2" stroke-dasharray="5 4"/>`;
+    let lo = 0, hi = 0; ci.forEach((v, i) => { if (v < ci[lo]) lo = i; if (v > ci[hi]) hi = i; });
+    $('insight').textContent = `In ${MONTHS[chartMonth - 1]}, grid power in ${r.input.regionName} is typically cleanest around ${clock(lo)} (${Math.round(ci[lo])} g) and most carbon-intensive around ${clock(hi)} (${Math.round(ci[hi])} g).`;
+  }
+
+  // --- load grid data ---
+  function start(json) {
+    DATA = json;
+    document.getElementById('m-year').textContent = json.meta.year;
+    update();
+  }
+  fetch(CONFIG.shapesUrl, { cache: 'default' })
+    .then(res => res.ok ? res.json() : null)
+    .then(j => { if (j) { SHAPES = j; if (DATA) update(); } })
+    .catch(() => {});
+  fetch(CONFIG.dataUrl, { cache: 'default' })
+    .then(res => { if (!res.ok) throw new Error(res.status); return res.json(); })
+    .then(start)
+    .catch(() => {
+      $('results-body').innerHTML = `<div class="loadfail">The grid data file (${CONFIG.dataUrl}) didn't load. If you've opened this page from your computer rather than the website, choose the file here:
+        <br><input type="file" id="dataFile" accept=".json,application/json"></div>`;
+      $('dataFile').addEventListener('change', e => {
+        const f = e.target.files[0]; if (!f) return;
+        f.text().then(t => start(JSON.parse(t))).catch(() => alert('That file could not be read as grid data.'));
+      });
+    });
+
+  update();
+})();
+</script>
+</body>
+</html>
