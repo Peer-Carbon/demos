@@ -304,7 +304,7 @@ footer {
   <div class="nav-right">
     <button class="btn-nav-ghost" onclick="openM('host')">Get Carbon Funding</button>
     <button class="btn-nav-teal" onclick="openM('funder')">Fund Local Impact</button>
-    <a class="btn-nav-white" href="https://uk.peerco.ai/peerco_calculator.html">Get started</a>
+    <a class="btn-nav-white" href="peerco_calculator.html">Get started</a>
   </div>
 </nav>
 
@@ -318,7 +318,7 @@ footer {
       A hyper-local marketplace connecting <strong>leading enterprises</strong> with <strong>neighbouring small businesses</strong>. Through peer-to-peer climate partnerships, we drive local carbon reduction while maximising community wealth, green skills, and environmental impact. <strong>Starting in London&rsquo;s Fleet Street Quarter.</strong>
     </p>
     <div class="hero-btns">
-      <a class="btn-teal" href="https://uk.peerco.ai/peerco_calculator.html">Get started on my footprint &rarr;</a>
+      <a class="btn-teal" href="peerco_calculator.html">Get started on my footprint &rarr;</a>
     </div>
   </div>
 </div>
@@ -448,7 +448,7 @@ footer {
         <div class="est-box" id="est-box">
           <div class="est-label">What could it be worth?</div>
           <div class="est-note">See your carbon footprint, what this upgrade would save and the value of its energy certificates in our calculator.</div>
-          <p class="calc-link"><a id="calc-link" href="https://uk.peerco.ai/peerco_calculator.html" target="_blank">Open the calculator &rarr;</a></p>
+          <p class="calc-link"><a id="calc-link" href="peerco_calculator.html" target="_blank">Open the calculator &rarr;</a></p>
         </div>
         <div class="field"><label>Your name *</label><input type="text" name="name" placeholder="Full name" required></div>
         <div class="field"><label>Organisation or building name *</label><input type="text" name="organisation" placeholder="Company A" required></div>
@@ -489,7 +489,7 @@ function selOpt(btn, hiddenId) {
 function updateEst(v) {
   // Show a link to the calculator, with the chosen upgrade already ticked
   const measures = { 'LED lighting upgrade':'led', 'Solar PV':'solar', 'Heat pump / HVAC':'heatpump', 'Battery storage':'battery' };
-  const base = 'https://uk.peerco.ai/peerco_calculator.html';
+  const base = 'peerco_calculator.html';
   document.getElementById('calc-link').href = measures[v] ? base + '?measures=' + measures[v] : base;
   document.getElementById('est-box').style.display = v ? 'block' : 'none';
 }
